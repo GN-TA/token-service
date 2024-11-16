@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: token-service
+
+  profiles:
+    active: dev
+
+server:
+  port:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+logging:
+  level:
+    root: info

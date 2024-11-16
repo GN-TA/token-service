@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+data:
+  redis:
+    host: localhost
+    port: 6379
+    password:
+
+jwt:
+  private-key: |
+    -----BEGIN PRIVATE KEY-----
+    TEST_PRIVATE_KEY_BASE64_ENCODED
+    ——END PRIVATE KEY——
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    TEST_PUBLIC_KEY_BASE64_ENCODED
+    ——END PUBLIC KEY——
