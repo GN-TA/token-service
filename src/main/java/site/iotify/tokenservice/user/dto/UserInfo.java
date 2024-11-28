@@ -1,11 +1,13 @@
-package site.iotify.tokenservice.member.dto;
+package site.iotify.tokenservice.user.dto;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
-public class MemberInfo {
+public class UserInfo {
     private Long id;
-    private String name;
+    private String username;
     private String email;
     private String password;
     private String provider;

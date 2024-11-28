@@ -1,11 +1,11 @@
-package site.iotify.tokenservice.member.config.auth;
+package site.iotify.tokenservice.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import site.iotify.tokenservice.member.dto.MemberInfo;
+import site.iotify.tokenservice.user.dto.UserInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class PrincipalDetails implements UserDetails, OidcUser {
 
-    private MemberInfo memberInfo;
+    private UserInfo userInfo;
     private Map<String, Object> attributes;
     private Map<String, Object> claims;
     private OidcUserInfo oidcUserInfo;
@@ -21,23 +21,23 @@ public class PrincipalDetails implements UserDetails, OidcUser {
 
     /**
      * 일반 로그인 시 호출되는 생성자입니다.
-     * @param memberInfo
+     * @param userInfo
      */
-    public PrincipalDetails(MemberInfo memberInfo) {
-        this.memberInfo = memberInfo;
+    public PrincipalDetails(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 
     /**
      * 구글 OAuth 로그인 시 호출되는 생성자입니다.
-     * @param memberInfo
+     * @param userInfo
      * @param attributes
      * @param claims
      * @param oidcUserInfo
      * @param oidcIdToken
      */
-    public PrincipalDetails(MemberInfo memberInfo, Map<String, Object> attributes, Map<String, Object> claims,
+    public PrincipalDetails(UserInfo userInfo, Map<String, Object> attributes, Map<String, Object> claims,
                             OidcUserInfo oidcUserInfo, OidcIdToken oidcIdToken) {
-        this.memberInfo = memberInfo;
+        this.userInfo = userInfo;
         this.attributes = attributes;
         this.claims = claims;
         this.oidcUserInfo = oidcUserInfo;
@@ -58,18 +58,18 @@ public class PrincipalDetails implements UserDetails, OidcUser {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add((GrantedAuthority) () -> memberInfo.getAuth());
+        authorities.add((GrantedAuthority) () -> userInfo.getAuth());
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return memberInfo.getPassword();
+        return userInfo.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return memberInfo.getName();
+        return userInfo.getUsername();
     }
 
     @Override

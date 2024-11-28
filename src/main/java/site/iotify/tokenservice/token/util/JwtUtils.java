@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,28 +23,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
-    private static final long EXPIRATION_TIME_MS_ACCESS = 1000 * 60 * 60;
-    private static final long EXPIRATION_TIME_MS_REFRESH = 1000 * 60 * 60 * 24 * 7;
+    private static final long EXPIRATION_TIME_MS_ACCESS = 1000l * 60 * 60;
+    private static final long EXPIRATION_TIME_MS_REFRESH = 1000l * 60 * 60 * 24 * 7;
 
     @Value("${jwt.private-key}")
-    private static String privateKey;
+    private String privateKey;
 
     @Value("${jwt.public-key}")
-    private static String publicKey;
+    private String publicKey;
 
     /**
      * Token 생성을 위한 private key 객체 생성
      * @return
      */
-    private static PrivateKey getPrivateKey() {
+    private PrivateKey getPrivateKey() {
         String privateKeyPEM = privateKey
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("——END PRIVATE KEY——", "")
                 .replaceAll("\\s", "");
+
+        log.debug("[#] privateKeyPEM : {}", privateKeyPEM);
 
         byte[] keyBytes = Base64.getDecoder().decode(privateKeyPEM);
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
@@ -57,11 +61,13 @@ public class JwtUtils {
     }
 
 
-    private static PublicKey getPublicKey() {
+    private PublicKey getPublicKey() {
         String publicKeyPEM = publicKey
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("——END PUBLIC KEY——", "")
                 .replaceAll("\\s", "");
+
+        log.debug("[#] publicKeyPEM : {}", publicKeyPEM);
 
         byte[] keyBytes = Base64.getDecoder().decode(publicKeyPEM);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
@@ -75,7 +81,7 @@ public class JwtUtils {
         }
     }
 
-    public static String generateAccessToken(String userId) {
+    public String generateAccessToken(String userId) {
         Map<String, String> header = new HashMap<>();
         header.put("alg", "RS256");
         header.put("typ", "JWT");
@@ -89,7 +95,8 @@ public class JwtUtils {
                 .compact();
     }
 
-    public static String generateRefreshToken(String userId) {
+    public String generateRefreshToken(String userId) {
+
         return Jwts.builder()
                 .subject(userId)
                 .issuedAt(new Date())
@@ -98,7 +105,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public static boolean validateToken(String refreshToken, String storedRefreshToken) {
+    public boolean validateToken(String refreshToken, String storedRefreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             return false;
         }
@@ -111,7 +118,7 @@ public class JwtUtils {
         }
     }
 
-    public static Jws<Claims> getClaims(String token) {
+    public Jws<Claims> getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getPublicKey())
                 .build()
@@ -119,12 +126,12 @@ public class JwtUtils {
     }
 
 
-    public static String extractUserId(String token) {
+    public String extractUserId(String token) {
         return getClaims(token).getPayload().getSubject();
     }
 
-    public static Duration extractExpirationTime(String token) {
-        return Duration.ofDays(getClaims(token).getPayload().getExpiration().getTime());
+    public Duration extractExpirationTime(String token) {
+        return Duration.ofMillis(getClaims(token).getPayload().getExpiration().getTime());
     }
 
 }

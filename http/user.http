@@ -1,0 +1,16 @@
+### user 저장
+POST http://localhost:8090/user
+Content-Type: application/json
+
+{
+  "id": "2",
+  "email": "unit@email.com",
+  "username": "qaw",
+  "password": "1",
+  "auth": "ADMIN",
+  "provider": ""
+}
+
+### email(login id)로 유저조회
+GET http://localhost:8090/user?email=unit@email.com
+Content-Type: application/json

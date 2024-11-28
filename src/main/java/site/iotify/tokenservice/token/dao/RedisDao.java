@@ -1,17 +1,20 @@
 package site.iotify.tokenservice.token.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisDao {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void saveToken(String key, String value, Duration duration) {
+        log.info("[#] save token - key: {}, value: {}, duration: {}", key, value, duration);
         redisTemplate.opsForValue().set(key, value, duration);
     }
 
@@ -19,7 +22,7 @@ public class RedisDao {
         if (key == null) {
             return false;
         }
-        return redisTemplate.hasKey(key);
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
     public String getToken(String key) {

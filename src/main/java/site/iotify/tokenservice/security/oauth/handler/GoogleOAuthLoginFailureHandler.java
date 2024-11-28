@@ -1,4 +1,4 @@
-package site.iotify.tokenservice.member.config.oauth;
+package site.iotify.tokenservice.security.oauth.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -5,11 +5,7 @@ data:
     password:
 
 jwt:
-  private-key: |
-    -----BEGIN PRIVATE KEY-----
-    TEST_PRIVATE_KEY_BASE64_ENCODED
-    ——END PRIVATE KEY——
-  public-key: |
-    -----BEGIN PUBLIC KEY-----
-    TEST_PUBLIC_KEY_BASE64_ENCODED
-    ——END PUBLIC KEY——
+  private-key:
+
+  public-key:
+

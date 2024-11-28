@@ -1,17 +1,21 @@
-package site.iotify.tokenservice.member.config.oauth;
+package site.iotify.tokenservice.security.oauth;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
-import site.iotify.tokenservice.member.config.auth.PrincipalDetails;
-import site.iotify.tokenservice.member.dto.MemberInfo;
+import site.iotify.tokenservice.security.PrincipalDetails;
+import site.iotify.tokenservice.user.adapter.UserAdapter;
+import site.iotify.tokenservice.user.dto.UserInfo;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CustomOidcUserService extends OidcUserService {
+    private final UserAdapter userAdapter;
 
     /**
      * Google OAuth 인증을 처리하며, Google 서버로부터 사용자 정보를 가져와
@@ -23,12 +27,12 @@ public class CustomOidcUserService extends OidcUserService {
      */
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-        log.debug("userRequest: {}", userRequest);
-        log.debug("accessToken: {}", userRequest.getAccessToken());
-        log.debug("clientRegistration: {}", userRequest.getClientRegistration());
+        log.debug("[#] userRequest: {}", userRequest);
+        log.debug("[#] accessToken: {}", userRequest.getAccessToken());
+        log.debug("[#] clientRegistration: {}", userRequest.getClientRegistration());
 
         OidcUser oidcUser = super.loadUser(userRequest);
-        log.debug("oidcUser: {}", oidcUser.getAttributes());
+        log.debug("[#] oidcUser: {}", oidcUser.getAttributes());
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
         if (!provider.equals("google")) {
@@ -37,12 +41,12 @@ public class CustomOidcUserService extends OidcUserService {
 
         String userId = "google_" + oidcUser.getAttribute("sub");
 
-        // TODO user-service에 userId로 검색해서 회원 정보 가져오기
-        MemberInfo memberInfo = null;
-        if (memberInfo == null) {
+        UserInfo userInfo = null;
+        if (userInfo == null) {
             // user-service 회원가입 요청 보내기
+            userInfo = userAdapter.getUserInfo(userId);
         }
 
-        return new PrincipalDetails(memberInfo);
+        return new PrincipalDetails(userInfo);
     }
 }

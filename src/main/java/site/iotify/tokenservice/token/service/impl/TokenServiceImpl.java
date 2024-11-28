@@ -1,64 +1,63 @@
 package site.iotify.tokenservice.token.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import site.iotify.tokenservice.member.dto.MemberInfo;
+import site.iotify.tokenservice.security.PrincipalDetails;
 import site.iotify.tokenservice.token.controller.dto.Token;
-import site.iotify.tokenservice.token.exception.InvalidRefreshToken;
-import site.iotify.tokenservice.token.exception.LoginFailedException;
-import site.iotify.tokenservice.member.service.MemberService;
+import site.iotify.tokenservice.exception.InvalidRefreshToken;
 import site.iotify.tokenservice.token.service.TokenService;
 import site.iotify.tokenservice.token.dao.RedisDao;
 import site.iotify.tokenservice.token.util.JwtUtils;
 
 import java.time.Duration;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
+    private final JwtUtils jwtUtils;
     private final RedisDao redisDao;
-    private final MemberService memberService;
 
     @Override
-    public Token issueJwt(String loginId, String password) {
-        if (loginId == null || loginId.isEmpty() || password == null || password.isEmpty()) {
-            throw new LoginFailedException(loginId + ": id or password is empty");
-        }
-
-        if (memberService.validateLogin(loginId, password)) {
-            MemberInfo memberInfo = memberService.getMemberInfo(loginId);
-
-            return issueToken(String.valueOf(memberInfo.getId()));
-
-        } else {
-            throw new LoginFailedException(loginId + ": invalid password");
-        }
+    public Token issueJwt(PrincipalDetails principalDetails) {
+        return issueToken(String.valueOf(principalDetails.getUsername()));
     }
 
     @Override
     public Token reissueToken(String accessToken, String refreshToken) {
-        String userId = JwtUtils.extractUserId(accessToken);
+        String userId = jwtUtils.extractUserId(accessToken);
         String storedToken = redisDao.getToken(userId);
 
-        if (JwtUtils.validateToken(refreshToken, storedToken)) {
-            blackListToken(accessToken, refreshToken);
+        if (jwtUtils.validateToken(refreshToken, storedToken)) {
+            blackListToken(accessToken, refreshToken, "refresh");
             return issueToken(userId);
         } else {
             throw new InvalidRefreshToken();
         }
     }
 
-    private void blackListToken(String accessToken, String refreshToken) {
-        redisDao.saveToken(accessToken, "", JwtUtils.extractExpirationTime(accessToken));
-        redisDao.deleteToken(JwtUtils.extractUserId(refreshToken));
+    @Override
+    public void blackListToken(String accessToken, String refreshToken, String type) {
+        redisDao.saveToken(accessToken, type, jwtUtils.extractExpirationTime(accessToken));
+        String key = jwtUtils.extractUserId(refreshToken);
+        if (redisDao.hasToken(key)) {
+            redisDao.deleteToken(jwtUtils.extractUserId(refreshToken));
+        }
     }
 
     private Token issueToken(String id) {
-        String accessToken = JwtUtils.generateAccessToken(id);
-        String refreshToken = JwtUtils.generateRefreshToken(id);
-        Duration expiration = JwtUtils.extractExpirationTime(refreshToken);
+        log.trace("[#] Issuing token... : {}", id);
+
+        String accessToken = jwtUtils.generateAccessToken(id);
+        String refreshToken = jwtUtils.generateRefreshToken(id);
+        Duration expiration = jwtUtils.extractExpirationTime(refreshToken);
+
+        log.debug("[#] expiration: {}", expiration);
 
         redisDao.saveToken(id, refreshToken, expiration);
+
+        log.trace("[#] issue Token successfully");
         return new Token(accessToken, refreshToken);
     }
 

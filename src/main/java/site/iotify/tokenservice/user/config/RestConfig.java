@@ -1,4 +1,4 @@
-package site.iotify.tokenservice.member.config;
+package site.iotify.tokenservice.user.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
