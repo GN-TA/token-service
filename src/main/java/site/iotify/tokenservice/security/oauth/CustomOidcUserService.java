@@ -41,8 +41,8 @@ public class CustomOidcUserService extends OidcUserService {
 
         String userId = "google_" + oidcUser.getAttribute("sub");
 
-        UserInfo userInfo =  userAdapter.getUserInfo(userId);;
-        String password = userAdapter.getPassword(userId);
+        UserInfo userInfo =  userAdapter.getUserInfo(userId);
+        String password = userAdapter.getPassword(userInfo.getId());
 
         return new PrincipalDetails(userInfo, password);
     }

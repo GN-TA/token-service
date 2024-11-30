@@ -27,7 +27,7 @@ public class UserAdapter {
         return response.getBody();
     }
 
-    public String getPassword(String id) {
+    public String getPassword(long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
