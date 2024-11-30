@@ -50,20 +50,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
         http
+                // TODO : 프론트 상황에 따라 cors 설정 필요
+//                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/login", "/refresh", "/logout").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                                .disable()
-//                        .loginPage("http://localhost:8080/login")
-//                        .loginProcessingUrl("/login")
-//                        .defaultSuccessUrl("http://localhost:8080/?state=loginSuccess", true)
-//                        .failureUrl("http://localhost:8080/login?state=error")
-//                        .permitAll()
+                .formLogin(AbstractHttpConfigurer::disable
                 )
+                // TODO : front로 처리하면 될 것 같은데 좀 더 알아봐야 할 것 같음
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("http://localhost:8080/login")
+                        .loginPage("http://localhost:80/login")
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
                         .authorizationEndpoint(authEndpoint -> authEndpoint.baseUri("/oauth2/authorization"))
                         .redirectionEndpoint(redirect -> redirect.baseUri("http://localhost:8091/login"))

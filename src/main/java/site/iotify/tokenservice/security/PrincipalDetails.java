@@ -14,6 +14,7 @@ import java.util.Map;
 public class PrincipalDetails implements UserDetails, OidcUser {
 
     private UserInfo userInfo;
+    private String password;
     private Map<String, Object> attributes;
     private Map<String, Object> claims;
     private OidcUserInfo oidcUserInfo;
@@ -23,8 +24,9 @@ public class PrincipalDetails implements UserDetails, OidcUser {
      * 일반 로그인 시 호출되는 생성자입니다.
      * @param userInfo
      */
-    public PrincipalDetails(UserInfo userInfo) {
+    public PrincipalDetails(UserInfo userInfo, String password) {
         this.userInfo = userInfo;
+        this.password = password;
     }
 
     /**
@@ -35,9 +37,10 @@ public class PrincipalDetails implements UserDetails, OidcUser {
      * @param oidcUserInfo
      * @param oidcIdToken
      */
-    public PrincipalDetails(UserInfo userInfo, Map<String, Object> attributes, Map<String, Object> claims,
+    public PrincipalDetails(UserInfo userInfo, String password, Map<String, Object> attributes, Map<String, Object> claims,
                             OidcUserInfo oidcUserInfo, OidcIdToken oidcIdToken) {
         this.userInfo = userInfo;
+        this.password = password;
         this.attributes = attributes;
         this.claims = claims;
         this.oidcUserInfo = oidcUserInfo;
@@ -64,7 +67,7 @@ public class PrincipalDetails implements UserDetails, OidcUser {
 
     @Override
     public String getPassword() {
-        return userInfo.getPassword();
+        return password;
     }
 
     @Override

@@ -18,22 +18,16 @@ public class JwtLogoutHandler implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.trace("[#] Logout..");
+        log.debug("[#] Logout..");
         try {
             String accessToken = request.getHeader("Authorization").substring(7);
-            String refreshToken = null;
-            for (Cookie cookie : request.getCookies()) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue();
-                }
-            }
 
-            tokenService.blackListToken(accessToken, refreshToken, "logout");
+            tokenService.blackListToken(accessToken, "logout");
 
         } catch (NullPointerException e) {
             throw new LogoutFailedException(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        log.trace("[#] Logout successful.");
+        log.debug("[#] Logout successful.");
     }
 }

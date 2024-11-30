@@ -28,19 +28,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.trace("[#] 로그인 검증 중");
+        log.debug("[#] 로그인 검증 중");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        LoginRequestDto loginRequestDto = null;
-        try {
-            loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginRequestDto.getEmail(),
-                loginRequestDto.getPassword()
+                username,
+                password
         );
 
         return authenticationManager.authenticate(authenticationToken);
@@ -49,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
-        log.trace("`[#] Login Success : {}", principalDetails.getUsername());
+        log.debug("`[#] Login Success : {}", principalDetails.getUsername());
         Token token = tokenService.issueJwt(principalDetails);
         log.debug("[#] access token: {}", token.getAccessToken());
         log.debug("[#] refresh token: {}", token.getRefreshToken());
@@ -57,7 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String body = new ObjectMapper().writeValueAsString(token);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpStatus.CREATED.value());
+        response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(body);
     }
 

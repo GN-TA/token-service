@@ -30,7 +30,7 @@ public class TokenServiceImpl implements TokenService {
         String storedToken = redisDao.getToken(userId);
 
         if (jwtUtils.validateToken(refreshToken, storedToken)) {
-            blackListToken(accessToken, refreshToken, "refresh");
+            blackListToken(accessToken, "refresh");
             return issueToken(userId);
         } else {
             throw new InvalidRefreshToken();
@@ -38,16 +38,16 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void blackListToken(String accessToken, String refreshToken, String type) {
+    public void blackListToken(String accessToken, String type) {
         redisDao.saveToken(accessToken, type, jwtUtils.extractExpirationTime(accessToken));
-        String key = jwtUtils.extractUserId(refreshToken);
+        String key = jwtUtils.extractUserId(accessToken);
         if (redisDao.hasToken(key)) {
-            redisDao.deleteToken(jwtUtils.extractUserId(refreshToken));
+            redisDao.deleteToken(jwtUtils.extractUserId(accessToken));
         }
     }
 
     private Token issueToken(String id) {
-        log.trace("[#] Issuing token... : {}", id);
+        log.debug("[#] Issuing token... : {}", id);
 
         String accessToken = jwtUtils.generateAccessToken(id);
         String refreshToken = jwtUtils.generateRefreshToken(id);
@@ -57,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
 
         redisDao.saveToken(id, refreshToken, expiration);
 
-        log.trace("[#] issue Token successfully");
+        log.debug("[#] issue Token successfully");
         return new Token(accessToken, refreshToken);
     }
 

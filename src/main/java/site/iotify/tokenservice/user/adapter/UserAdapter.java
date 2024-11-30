@@ -9,7 +9,7 @@ import site.iotify.tokenservice.user.dto.UserInfo;
 @Component
 @RequiredArgsConstructor
 public class UserAdapter {
-    private final String USER_API_URL = "http://localhost:8090/";
+    private final String USER_API_URL = "http://localhost:8090";
     private final RestTemplate restTemplate;
 
     public UserInfo getUserInfo(String emailId) {
@@ -18,10 +18,25 @@ public class UserAdapter {
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<UserInfo> response = restTemplate.exchange(
-                USER_API_URL + "user?email=" + emailId,
+                USER_API_URL + "/user?email=" + emailId,
                 HttpMethod.GET,
                 request,
                 UserInfo.class
+        );
+
+        return response.getBody();
+    }
+
+    public String getPassword(String id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                USER_API_URL + "/pwd?id=" + id,
+                HttpMethod.GET,
+                request,
+                String.class
         );
 
         return response.getBody();

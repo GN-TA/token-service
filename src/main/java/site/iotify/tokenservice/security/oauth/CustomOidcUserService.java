@@ -41,12 +41,9 @@ public class CustomOidcUserService extends OidcUserService {
 
         String userId = "google_" + oidcUser.getAttribute("sub");
 
-        UserInfo userInfo = null;
-        if (userInfo == null) {
-            // user-service 회원가입 요청 보내기
-            userInfo = userAdapter.getUserInfo(userId);
-        }
+        UserInfo userInfo =  userAdapter.getUserInfo(userId);;
+        String password = userAdapter.getPassword(userId);
 
-        return new PrincipalDetails(userInfo);
+        return new PrincipalDetails(userInfo, password);
     }
 }
