@@ -1,6 +1,6 @@
 data:
   redis:
-    host: localhost
+    host:
     port: 6379
     password:
 
@@ -9,5 +9,5 @@ jwt:
   public-key:
 
 user:
-  host: localhost
-  port: 8090
+  host:
+  port:
