@@ -36,7 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        String password = userAdapter.getPassword(userInfo.getId());
+        String password = userAdapter.getPassword(userInfo.getEmail());
 
         log.info("[#] UserInfo : {}", userInfo.toString());
         return new PrincipalDetails(userInfo, password);

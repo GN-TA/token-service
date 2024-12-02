@@ -9,8 +9,10 @@ import site.iotify.tokenservice.exception.InvalidRefreshToken;
 import site.iotify.tokenservice.token.service.TokenService;
 import site.iotify.tokenservice.token.dao.RedisDao;
 import site.iotify.tokenservice.token.util.JwtUtils;
+import site.iotify.tokenservice.user.dto.UserInfo;
 
 import java.time.Duration;
+import java.util.Collection;
 
 @Slf4j
 @Service
@@ -21,17 +23,19 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token issueJwt(PrincipalDetails principalDetails) {
-        return issueToken(String.valueOf(principalDetails.getUsername()));
+        UserInfo user = principalDetails.getUser();
+        return issueToken(user.getEmail(), principalDetails.getAuthorities());
     }
 
     @Override
     public Token reissueToken(String accessToken, String refreshToken) {
-        String userId = jwtUtils.extractUserId(accessToken);
-        String storedToken = redisDao.getToken(userId);
+        String email = jwtUtils.extractEmail(accessToken);
+        String storedToken = redisDao.getToken(email);
 
         if (jwtUtils.validateToken(refreshToken, storedToken)) {
             blackListToken(accessToken, "refresh");
-            return issueToken(userId);
+            Collection authorities = (Collection) jwtUtils.getClaims(accessToken).getPayload().get("roles");
+            return issueToken(email, authorities);
         } else {
             throw new InvalidRefreshToken();
         }
@@ -40,22 +44,22 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public void blackListToken(String accessToken, String type) {
         redisDao.saveToken(accessToken, type, jwtUtils.extractExpirationTime(accessToken));
-        String key = jwtUtils.extractUserId(accessToken);
+        String key = jwtUtils.extractEmail(accessToken);
         if (redisDao.hasToken(key)) {
-            redisDao.deleteToken(jwtUtils.extractUserId(accessToken));
+            redisDao.deleteToken(jwtUtils.extractEmail(accessToken));
         }
     }
 
-    private Token issueToken(String id) {
-        log.debug("[#] Issuing token... : {}", id);
+    private Token issueToken(String email, Collection authorities) {
+        log.debug("[#] Issuing token... : {}", email);
 
-        String accessToken = jwtUtils.generateAccessToken(id);
-        String refreshToken = jwtUtils.generateRefreshToken(id);
+        String accessToken = jwtUtils.generateAccessToken(email, authorities);
+        String refreshToken = jwtUtils.generateRefreshToken(email);
         Duration expiration = jwtUtils.extractExpirationTime(refreshToken);
 
         log.debug("[#] expiration: {}", expiration);
 
-        redisDao.saveToken(id, refreshToken, expiration);
+        redisDao.saveToken(email, refreshToken, expiration);
 
         log.debug("[#] issue Token successfully");
         return new Token(accessToken, refreshToken);

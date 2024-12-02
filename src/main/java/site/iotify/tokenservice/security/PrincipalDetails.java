@@ -105,8 +105,14 @@ public class PrincipalDetails implements UserDetails, OidcUser {
         return oidcUserInfo;
     }
 
+    public UserInfo getUser() {
+        return userInfo;
+    }
+
     @Override
     public OidcIdToken getIdToken() {
         return oidcIdToken;
     }
+
+
 }

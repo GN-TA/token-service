@@ -27,13 +27,13 @@ public class UserAdapter {
         return response.getBody();
     }
 
-    public String getPassword(long id) {
+    public String getPassword(String email) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                USER_API_URL + "/pwd?id=" + id,
+                USER_API_URL + "/pwd?id=" + email,
                 HttpMethod.GET,
                 request,
                 String.class

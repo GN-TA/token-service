@@ -3,8 +3,6 @@ package site.iotify.tokenservice.token.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -81,14 +76,15 @@ public class JwtUtils {
         }
     }
 
-    public String generateAccessToken(String userId) {
+    public String generateAccessToken(String email, Collection roles) {
         Map<String, String> header = new HashMap<>();
         header.put("alg", "RS256");
         header.put("typ", "JWT");
 
         return Jwts.builder()
                 .header().add(header).and()
-                .subject(userId)
+                .subject(email)
+                .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + EXPIRATION_TIME_MS_ACCESS))
                 .signWith(getPrivateKey(), Jwts.SIG.RS256)
@@ -126,7 +122,7 @@ public class JwtUtils {
     }
 
 
-    public String extractUserId(String token) {
+    public String extractEmail(String token) {
         return getClaims(token).getPayload().getSubject();
     }
 
