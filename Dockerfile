@@ -13,6 +13,7 @@ COPY src ./src
 
 # Gradle 빌드 실행
 RUN chmod +x /app/gradlew
+RUN ls
 RUN ./gradlew clean build --no-daemon
 
 # 2단계: 실행 단계 (Runtime stage)
