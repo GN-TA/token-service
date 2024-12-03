@@ -1,13 +1,13 @@
 data:
   redis:
-    host:
-    port: 6379
-    password:
+    host: ${{ secrets.REDIS_HOST }}
+    port: ${{ secrets.REDIS_PORT }}
+    password: ${{ secrets.REDIS_PASSWORD }}
 
 jwt:
-  private-key:
-  public-key:
+  private-key: ${{ secrets.JWT_PRIVATE_KEY }}
+  public-key: ${{ secrets.JWT_PUBLIC_KEY }}
 
-user:
-  host:
-  port:
+user-service:
+  host: ${{ secrets.SERVER_HOST }}
+  port: ${{ secrets.SERVER_PORT }}
