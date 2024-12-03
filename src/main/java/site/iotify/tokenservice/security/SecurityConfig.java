@@ -1,5 +1,6 @@
 package site.iotify.tokenservice.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ import site.iotify.tokenservice.token.service.TokenService;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    @Value("${user-service.host}")
+    private String host;
     private final TokenService tokenService;
 
     private final CustomOidcUserService customOidcUserService;
@@ -60,10 +63,10 @@ public class SecurityConfig {
                 )
                 // TODO : front로 처리하면 될 것 같은데 좀 더 알아봐야 할 것 같음
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("http://localhost:80/login")
+                        .loginPage("http://"+host+":80/login")
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
                         .authorizationEndpoint(authEndpoint -> authEndpoint.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirect -> redirect.baseUri("http://localhost:8091/login"))
+                        .redirectionEndpoint(redirect -> redirect.baseUri("http://"+host+":8091/login"))
                         .successHandler(googleOAuthLoginSuccessHandler)
                         .failureHandler(googleOAuthLoginFailureHandler))
                 .httpBasic(AbstractHttpConfigurer::disable)
