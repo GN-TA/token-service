@@ -1,0 +1,13 @@
+data:
+  redis:
+    host: localhost
+    port: 6379
+    password:
+
+jwt:
+  private-key:
+  public-key:
+
+user:
+  host: localhost
+  port: 8090
