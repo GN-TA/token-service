@@ -9,9 +9,9 @@ name: Java CI/CD with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 env:
   DOCKER_IMAGE: codethestudent/iot-token-service:latest
@@ -39,12 +39,12 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 8.5
-    
+
       - name: Check gradle version
         run: gradle --version
 
       - name: ls
-        run : ls -R
+        run: ls -R
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build
