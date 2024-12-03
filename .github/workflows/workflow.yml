@@ -43,9 +43,11 @@ jobs:
       - name: Check gradle version
         run: gradle --version
 
+      - name: ls
+        run : ls -R
+
       - name: Build with Gradle Wrapper
         run: |
-          ls
           ./gradlew build
 
         # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
