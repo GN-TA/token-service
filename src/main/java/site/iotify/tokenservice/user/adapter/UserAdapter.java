@@ -14,10 +14,10 @@ import site.iotify.tokenservice.user.dto.UserInfo;
 public class UserAdapter {
     private final RestTemplate restTemplate;
 
-    @Value("${user.host}")
+    @Value("${user-service.host}")
     private String host;
 
-    @Value("${user.port}")
+    @Value("${user-service.port}")
     private int port;
 
     public UserInfo getUserInfo(String emailId) {
