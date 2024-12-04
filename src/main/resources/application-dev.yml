@@ -8,6 +8,6 @@ jwt:
   private-key:
   public-key:
 
-user:
+user-service:
   host: localhost
   port: 8090
