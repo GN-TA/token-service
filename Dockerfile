@@ -31,4 +31,4 @@ EXPOSE 8091
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # 애플리케이션 실행
-CMD ["java", "-jar", "token.jar", "--spring.profiles.active=dev"]
+CMD ["java", "-jar", "token.jar", "--spring.profiles.active=prod"]
