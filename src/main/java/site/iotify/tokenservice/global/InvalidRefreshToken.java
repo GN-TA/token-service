@@ -1,4 +1,4 @@
-package site.iotify.tokenservice.exception;
+package site.iotify.tokenservice.global;
 
 import org.springframework.http.HttpStatus;
 

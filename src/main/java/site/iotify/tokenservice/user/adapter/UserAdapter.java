@@ -13,6 +13,7 @@ import site.iotify.tokenservice.user.dto.UserInfo;
 @RequiredArgsConstructor
 public class UserAdapter {
     private final RestTemplate restTemplate;
+    private final static String URL_PREFIX = "http://%s:%d";
 
     @Value("${user-service.host}")
     private String host;
@@ -24,7 +25,8 @@ public class UserAdapter {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = String.format("http://%s:%d/user?email=%s", host, port, emailId);
+
+        String url = String.format(URL_PREFIX + "/user?email=%s",host, port, emailId);
 
         ResponseEntity<UserInfo> response = restTemplate.exchange(
                 url,
@@ -41,7 +43,7 @@ public class UserAdapter {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = String.format("http://%s:%d/pwd?id=%s", host, port, email);
+        String url = String.format(URL_PREFIX + "/pwd?id=%s", host, port, email);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 url,

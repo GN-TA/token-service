@@ -10,6 +10,7 @@ import site.iotify.tokenservice.token.service.TokenService;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/token/v1")
 public class TokenController {
     private final TokenService tokenService;
 
