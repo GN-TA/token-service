@@ -15,12 +15,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import site.iotify.tokenservice.token.filter.JwtAuthenticationFilter;
 import site.iotify.tokenservice.security.oauth.handler.GoogleOAuthLoginFailureHandler;
 import site.iotify.tokenservice.security.oauth.CustomOidcUserService;
 import site.iotify.tokenservice.security.oauth.handler.GoogleOAuthLoginSuccessHandler;
 import site.iotify.tokenservice.token.handler.JwtLogoutHandler;
 import site.iotify.tokenservice.token.service.TokenService;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -60,10 +64,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+            config.setAllowCredentials(true);
+            return config;
+        };
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
         http
-                // TODO : 프론트 상황에 따라 cors 설정 필요
-//                .cors(AbstractHttpConfigurer::disable)
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(allowedUrls).permitAll()
                                 .anyRequest().authenticated()
