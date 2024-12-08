@@ -1,6 +1,5 @@
-package site.iotify.tokenservice.security;
+package site.iotify.tokenservice.token.handler;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import site.iotify.tokenservice.exception.LogoutFailedException;
+import site.iotify.tokenservice.global.LogoutFailedException;
+import site.iotify.tokenservice.global.util.ResponseUtil;
 import site.iotify.tokenservice.token.service.TokenService;
+
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +25,6 @@ public class JwtLogoutHandler implements LogoutHandler {
             String accessToken = request.getHeader("Authorization").substring(7);
 
             tokenService.blackListToken(accessToken, "logout");
-
         } catch (NullPointerException e) {
             throw new LogoutFailedException(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -1,5 +1,5 @@
 ### user 저장
-POST http://localhost:8090/user
+POST http://localhost:8092/user
 Content-Type: application/json
 
 {
@@ -12,5 +12,5 @@ Content-Type: application/json
 }
 
 ### email(login id)로 유저조회
-GET http://localhost:8090/user?email=qaw@email.com
+GET http://localhost:8092/user?email=qaw@email.com
 Content-Type: application/json

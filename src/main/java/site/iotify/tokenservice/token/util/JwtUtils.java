@@ -38,7 +38,7 @@ public class JwtUtils {
     private PrivateKey getPrivateKey() {
         String privateKeyPEM = privateKey
                 .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("——END PRIVATE KEY——", "")
+                .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
 
         log.debug("[#] privateKeyPEM : {}", privateKeyPEM);
@@ -59,7 +59,7 @@ public class JwtUtils {
     private PublicKey getPublicKey() {
         String publicKeyPEM = publicKey
                 .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("——END PUBLIC KEY——", "")
+                .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s", "");
 
         log.debug("[#] publicKeyPEM : {}", publicKeyPEM);

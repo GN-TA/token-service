@@ -10,4 +10,4 @@ jwt:
 
 user-service:
   host: localhost
-  port: 8090
+  port: 8092

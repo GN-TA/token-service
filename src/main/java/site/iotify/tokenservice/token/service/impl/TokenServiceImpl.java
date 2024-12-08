@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import site.iotify.tokenservice.security.PrincipalDetails;
 import site.iotify.tokenservice.token.controller.dto.Token;
-import site.iotify.tokenservice.exception.InvalidRefreshToken;
+import site.iotify.tokenservice.global.InvalidRefreshToken;
 import site.iotify.tokenservice.token.service.TokenService;
 import site.iotify.tokenservice.token.dao.RedisDao;
 import site.iotify.tokenservice.token.util.JwtUtils;

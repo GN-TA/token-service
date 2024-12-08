@@ -15,18 +15,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import site.iotify.tokenservice.security.auth.JwtAuthenticationFilter;
+import site.iotify.tokenservice.token.filter.JwtAuthenticationFilter;
 import site.iotify.tokenservice.security.oauth.handler.GoogleOAuthLoginFailureHandler;
 import site.iotify.tokenservice.security.oauth.CustomOidcUserService;
 import site.iotify.tokenservice.security.oauth.handler.GoogleOAuthLoginSuccessHandler;
+import site.iotify.tokenservice.token.handler.JwtLogoutHandler;
 import site.iotify.tokenservice.token.service.TokenService;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private final static String PATH_PREFIX = "/token/v1";
+    private final static String[] allowedUrls = {
+            PATH_PREFIX +"/login",
+            PATH_PREFIX +"/refresh",
+            PATH_PREFIX +"/logout"
+    };
+
     @Value("${user-service.host}")
     private String host;
+
     private final TokenService tokenService;
 
     private final CustomOidcUserService customOidcUserService;
@@ -56,7 +65,7 @@ public class SecurityConfig {
                 // TODO : 프론트 상황에 따라 cors 설정 필요
 //                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/login", "/refresh", "/logout").permitAll()
+                        authorize.requestMatchers(allowedUrls).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable
@@ -66,21 +75,21 @@ public class SecurityConfig {
                         .loginPage("http://"+host+":80/login")
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
                         .authorizationEndpoint(authEndpoint -> authEndpoint.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirect -> redirect.baseUri("http://"+host+":8091/login"))
+                        .redirectionEndpoint(redirect -> redirect.baseUri("http://"+host+":8091"+ allowedUrls[0]))
                         .successHandler(googleOAuthLoginSuccessHandler)
                         .failureHandler(googleOAuthLoginFailureHandler))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
 
         JwtAuthenticationFilter loginFilter = new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration), tokenService);
-        loginFilter.setFilterProcessesUrl("/login");
+        loginFilter.setFilterProcessesUrl(allowedUrls[0]);
         http
                 .addFilterAt(
                 loginFilter,
                 UsernamePasswordAuthenticationFilter.class
         )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl(allowedUrls[2])
                         .addLogoutHandler(new JwtLogoutHandler(tokenService))
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
