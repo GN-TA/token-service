@@ -38,7 +38,7 @@ jobs:
       - name: Set prod
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./src/main/resources/application-db.yml
+          files: ./src/main/resources/application-prod.yml
         env:
           data.redis.host: ${{ secrets.REDIS_HOST }}
           data.redis.port: ${{ secrets.REDIS_PORT }}
