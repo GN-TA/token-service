@@ -35,6 +35,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set prod
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-db.yml
+        env:
+          data.redis.host: ${{ secrets.REDIS_HOST }}
+          data.redis.port: ${{ secrets.REDIS_PORT }}
+          jwt.private-key: ${{ secrets.JWT_PRIVATE_KEY }}
+          jwt.public-key: ${{ secrets.JWT_PUBLIC_KEY }}
+          user-service.host: ${{ secrets.SERVER_HOST }}
+          user-service.port: ${{ secrets.SERVER_PORT }}
+
+
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
