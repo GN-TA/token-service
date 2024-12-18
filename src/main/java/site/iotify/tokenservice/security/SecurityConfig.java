@@ -78,7 +78,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
         http
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+                // TODO : 프론트 상황에 따라 cors 설정 필요
+//                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(allowedUrls).permitAll()
                                 .anyRequest().authenticated()
