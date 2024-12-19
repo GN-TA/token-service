@@ -27,8 +27,5 @@ COPY --from=build /app/build/libs/*SNAPSHOT.jar token.jar
 # 포트 8091 열기
 EXPOSE 8091
 
-# 환경 변수를 런타임 이미지에 설정
-ENV SPRING_PROFILES_ACTIVE=prod
-
 # 애플리케이션 실행
-CMD ["java", "-jar", "token.jar", "--spring.profiles.active=prod"]
+CMD ["java", "-jar", "token.jar"]
