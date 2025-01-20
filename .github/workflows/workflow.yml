@@ -11,7 +11,7 @@ on:
   push:
     branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
 
 env:
   DOCKER_IMAGE: codethestudent/iot-token-service:latest
