@@ -14,8 +14,8 @@ public class RedisDao {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void saveToken(String key, String value, Duration duration) {
-        log.info("[#] save token - key: {}, value: {}, duration: {}", key, value, duration);
         redisTemplate.opsForValue().set(key, value, duration);
+        log.info("[#] save token - key: {}, value: {}, duration: {}", key, value, duration);
     }
 
     public boolean hasToken(String key) {

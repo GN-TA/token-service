@@ -8,10 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import site.iotify.tokenservice.global.LogoutFailedException;
-import site.iotify.tokenservice.global.util.ResponseUtil;
 import site.iotify.tokenservice.token.service.TokenService;
 
-import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
