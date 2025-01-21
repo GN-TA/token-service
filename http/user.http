@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "id": "1",
-  "email": "qaw@email.com",
+  "email": "test@test.com",
   "username": "aw",
   "password": "123",
   "auth": "ADMIN",
@@ -12,5 +12,5 @@ Content-Type: application/json
 }
 
 ### email(login id)로 유저조회
-GET http://localhost:8092/user?email=qaw@email.com
+GET http://localhost:8092/user?email=test@test.com
 Content-Type: application/json
