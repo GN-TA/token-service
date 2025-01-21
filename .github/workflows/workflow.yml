@@ -44,7 +44,7 @@ jobs:
           data.redis.port: ${{ secrets.REDIS_PORT }}
           jwt.private-key: ${{ secrets.JWT_PRIVATE_KEY }}
           jwt.public-key: ${{ secrets.JWT_PUBLIC_KEY }}
-          user-service.host: ${{ secrets.SERVER_HOST }}
+          user-service.host: ${{ secrets.USER_SERVER_HOST }}
           user-service.port: ${{ secrets.SERVER_PORT }}
 
 
