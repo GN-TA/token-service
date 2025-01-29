@@ -50,6 +50,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.debug("[#] access token: {}", token.getAccessToken());
         log.debug("[#] refresh token: {}", token.getRefreshToken());
 
+        response.addHeader("Set-Cookie", "AT=" + token.getAccessToken() + "; Path=/; SameSite=Strict");
+        response.addHeader("Set-Cookie", "RT=" + token.getRefreshToken() + "; Path=/; SameSite=Strict");
+        log.debug("[#] Add Set Cookie Header");
+
         ResponseUtil.serResponse(response, HttpStatus.OK, token);
     }
 

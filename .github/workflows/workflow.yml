@@ -11,7 +11,7 @@ on:
   push:
     branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
 
 env:
   DOCKER_IMAGE: codethestudent/iot-token-service:latest
@@ -40,11 +40,11 @@ jobs:
         with:
           files: ./src/main/resources/application-prod.yml
         env:
-          data.redis.host: ${{ secrets.REDIS_HOST }}
-          data.redis.port: ${{ secrets.REDIS_PORT }}
+          spring.data.redis.host: ${{ secrets.REDIS_HOST }}
+          spring.data.redis.port: ${{ secrets.REDIS_PORT }}
           jwt.private-key: ${{ secrets.JWT_PRIVATE_KEY }}
           jwt.public-key: ${{ secrets.JWT_PUBLIC_KEY }}
-          user-service.host: ${{ secrets.SERVER_HOST }}
+          user-service.host: ${{ secrets.USER_SERVER_HOST }}
           user-service.port: ${{ secrets.SERVER_PORT }}
 
 

@@ -1,8 +1,9 @@
-data:
-  redis:
-    host:
-    port:
-    password:
+spring:
+  data:
+    redis:
+      host:
+      port:
+      password:
 
 jwt:
   private-key:

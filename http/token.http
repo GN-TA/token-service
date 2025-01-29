@@ -2,7 +2,7 @@
 POST http://localhost:8091/token/v1/login
 Content-Type: application/x-www-form-urlencoded
 
-username=qaw@email.com&password=123
+username=test@test.com&password=123
 
 ### refresh
 POST http://localhost:8091/token/v1/refresh
