@@ -30,7 +30,7 @@ import java.util.Collections;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final static String PATH_PREFIX = "/token/v1";
+    private final static String PATH_PREFIX = "/v1";
     private final static String[] allowedUrls = {
             PATH_PREFIX +"/login",
             PATH_PREFIX +"/refresh",
@@ -78,7 +78,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
         http
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+                // TODO : 프론트 상황에 따라 cors 설정 필요
+//                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(allowedUrls).permitAll()
                                 .anyRequest().authenticated()

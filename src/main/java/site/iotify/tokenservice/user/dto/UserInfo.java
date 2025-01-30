@@ -6,7 +6,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class UserInfo {
-    private Long id;
+    private String id;
     private String username;
     private String email;
     private String provider;

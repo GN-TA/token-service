@@ -24,7 +24,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token issueJwt(PrincipalDetails principalDetails) {
         UserInfo user = principalDetails.getUser();
-        return issueToken(user.getEmail(), principalDetails.getAuthorities());
+        return issueToken(user.getId(), principalDetails.getAuthorities());
     }
 
     @Override
