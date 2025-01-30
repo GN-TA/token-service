@@ -30,7 +30,7 @@ import java.util.Collections;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final static String PATH_PREFIX = "/token/v1";
+    private final static String PATH_PREFIX = "/v1";
     private final static String[] allowedUrls = {
             PATH_PREFIX +"/login",
             PATH_PREFIX +"/refresh",
