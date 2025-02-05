@@ -1,5 +1,6 @@
 package site.iotify.tokenservice.token.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +19,12 @@ import site.iotify.tokenservice.token.controller.dto.Token;
 import site.iotify.tokenservice.token.service.TokenService;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
@@ -29,17 +32,32 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         log.debug("[#] 로그인 검증 중");
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        log.debug("[#] username: {}", username);
-        log.debug("[#] password: {}", password);
+        String username;
+        String password;
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                username,
-                password
-        );
+        try {
+            // JSON 형식 요청일 경우
+            if (request.getContentType() != null && request.getContentType().contains("application/json")) {
+                Map<String, String> requestBody = objectMapper.readValue(request.getInputStream(), Map.class);
+                username = requestBody.get("email");  // 클라이언트가 email 키로 보낸 경우
+                password = requestBody.get("password");
+            } else {
+                // Form 형식 요청일 경우
+                username = request.getParameter("email"); // 기존 request.getParameter() 방식 유지
+                password = request.getParameter("password");
+            }
+            log.debug("[#] username: {}", username);
+            log.debug("[#] password: {}", password);
 
-        return authenticationManager.authenticate(authenticationToken);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    username,
+                    password
+            );
+
+            return authenticationManager.authenticate(authenticationToken);
+        } catch (IOException e) {
+            throw new AuthenticationException("입력 값을 읽을 수 없습니다") {};
+        }
     }
 
     @Override

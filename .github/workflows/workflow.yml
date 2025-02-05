@@ -35,6 +35,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      #설정값 주입
       - name: Set prod
         uses: microsoft/variable-substitution@v1
         with:
@@ -44,8 +45,8 @@ jobs:
           spring.data.redis.port: ${{ secrets.REDIS_PORT }}
           jwt.private-key: ${{ secrets.JWT_PRIVATE_KEY }}
           jwt.public-key: ${{ secrets.JWT_PUBLIC_KEY }}
-          user-service.host: ${{ secrets.USER_SERVER_HOST }}
-          user-service.port: ${{ secrets.SERVER_PORT }}
+          service.user-url: ${{ secrets.USER_URL }}
+          service.front-url: ${{ secrets.FRONT_URL }}
 
 
       - name: Setup Gradle

@@ -2,13 +2,13 @@ package site.iotify.tokenservice.global;
 
 import org.springframework.http.HttpStatus;
 
-public class InvalidRefreshToken extends AbstractApiException {
+public class InvalidToken extends AbstractApiException {
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
 
-    public InvalidRefreshToken(){
+    public InvalidToken(){
         super();
     }
-    public InvalidRefreshToken(String message) {
+    public InvalidToken(String message) {
         super(message);
     }
 
