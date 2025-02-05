@@ -37,8 +37,8 @@ public class SecurityConfig {
             PATH_PREFIX +"/logout"
     };
 
-    @Value("${user-service.host}")
-    private String host;
+    @Value("${service.front-url}")
+    private String frontUrl;
 
     private final TokenService tokenService;
 
@@ -69,7 +69,7 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Collections.singletonList("http://"+host));
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
             config.setAllowCredentials(true);
             return config;
         };
@@ -87,10 +87,10 @@ public class SecurityConfig {
                 )
                 // TODO : front로 처리하면 될 것 같은데 좀 더 알아봐야 할 것 같음
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("http://"+host+":80/login")
+                        .loginPage("http://"+frontUrl+"/login")
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
                         .authorizationEndpoint(authEndpoint -> authEndpoint.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirect -> redirect.baseUri("http://"+host+":8091"+ allowedUrls[0]))
+                        .redirectionEndpoint(redirect -> redirect.baseUri("http://localhost:8091"+ allowedUrls[0]))
                         .successHandler(googleOAuthLoginSuccessHandler)
                         .failureHandler(googleOAuthLoginFailureHandler))
                 .httpBasic(AbstractHttpConfigurer::disable)
