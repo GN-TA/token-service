@@ -27,11 +27,10 @@ public class JwtLogoutHandler implements LogoutHandler {
             String accessToken = CookieUtil.extractTokenFromCookies(request, "AT").orElseThrow(() -> new InvalidToken("Access token 이 존재하지 않습니다"));
             tokenService.blackListToken(accessToken, "logout");
 
-            response.addHeader("Set-Cookie", "AT=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict");
-            response.addHeader("Set-Cookie", "RT=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict");
+            CookieUtil.clearTokenCookie(response);
 
             response.setStatus(HttpServletResponse.SC_OK);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             throw new LogoutFailedException(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 

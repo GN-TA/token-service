@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import site.iotify.tokenservice.global.util.CookieUtil;
 import site.iotify.tokenservice.global.util.ResponseUtil;
 import site.iotify.tokenservice.security.PrincipalDetails;
 import site.iotify.tokenservice.token.controller.dto.Token;
@@ -68,8 +69,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.debug("[#] access token: {}", token.getAccessToken());
         log.debug("[#] refresh token: {}", token.getRefreshToken());
 
-        response.addHeader("Set-Cookie", "AT=" + token.getAccessToken() + "; Path=/; SameSite=Strict");
-        response.addHeader("Set-Cookie", "RT=" + token.getRefreshToken() + "; Path=/; SameSite=Strict");
+        CookieUtil.setTokenCookie(response, token);
         log.debug("[#] Add Set Cookie Header");
 
         ResponseUtil.serResponse(response, HttpStatus.OK, token);
