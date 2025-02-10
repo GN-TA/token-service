@@ -33,7 +33,7 @@ public class TokenServiceImpl implements TokenService {
         String storedToken = redisDao.getToken(email);
 
         if (jwtUtils.validateToken(refreshToken, storedToken)) {
-            blackListToken(accessToken, "refresh");
+            blackListToken(accessToken, "reissue");
             Collection authorities = (Collection) jwtUtils.getClaims(accessToken).getPayload().get("roles");
             return issueToken(email, authorities);
         } else {
