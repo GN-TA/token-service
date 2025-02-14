@@ -105,6 +105,14 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           # port: 22
           script: |
+            export PUBLIC_KEY=${{ secrets.PUBLIC_KEY }}
+            export PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+            export REDIS_HOST=${{ secrets.REDIS_HOST }}
+            export REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            export REDIS_PORT=${{ secrets.REDIS_PORT }}
+            export USER_URL=${{ secrets.USER_URL }}
+            export FRONT_URL=${{ secrets.FRONT_URL }}
+            export DOCKER_IMAGE=codethestudent/iot-token-service:latest
             cd docker-compose
             git config credential.helper store
             git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASS }}@github.com/GN-TA/docker-compose.git main

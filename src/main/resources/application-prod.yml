@@ -1,44 +1,18 @@
 spring:
   data:
     redis:
-      host: redis
-      port: 6379
-      password:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      database: 295
 
 jwt:
-  private-key: -----BEGIN PRIVATE KEY-----
-    MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDQXQudxE5ei+Iv
-    1zxFtw5SrtJWNv9w1qXgZZbvq9BK0glrxbs64d+P4ndAmW4+nWh1W3jOxckHMRh2
-    TKgY2Mx4SzFlmHLGSmzk75twZp5Ytr4PxwYmChFXqO5dXSCCBxu6dfUmBSCZpn0e
-    RDjtQXKosfEizRW8mdMrYCjxXC2LtH/5N0eNo03eaXjNdBVIIjEhRWmWAQW/Tj2P
-    mwMf0HU3PUurqHHWY3dBVqNd6SXQEFwpqXVLEw34/zDwiD9qOmsPc0CxX571Jlcs
-    Nd4cfWASUpt+iBKYPHMLERMIsKj12p1kaLQwtaoU1eAwVwJNJmgNyg22e02ObQ1N
-    9Ksybw3tAgMBAAECggEAAyuU9s6x0o+WTEnCpQF5KAfCDvN4aceslCTlRUzXW55c
-    NTFKIbPKqm5ZY0rNwy4gy5qbi2C13uIkWSPeBAdWIs5rOEWlhx/5oC2HZjSypTgL
-    uNUpPaU2JA2WhSZIcg1z67HKC/F5K8sGaOSfskEB0HT7f/pW2Jzp+i5nOjctZafh
-    ynijdU+iPnGNbJa90Vh3z2dYCfOrHeTXygUsXA6KLKH+hNYqHZw7Q1ed46glHh9C
-    jsAkN+xpN/JBVoJCn08zX7e9nvG8HWegE6UVIxrP0ZPaB0Gwr3bciw/+92nD6B7J
-    pBUQzoHdKgrkNpseAY/y96D+tdUImez5xWFIV65LEQKBgQD3lS2++h0f74atm/w4
-    bjERbFBce9q76o4v8EWfWv+J6iF8f3+ASZKUsUj5cjZuhIrOBk/rFpg49j7ZkOn6
-    uujgkYKbIenmSaWn/mBBtNKD989clh6n6iq0BXpEkcMAkZ/vJr4rCudGTXfYR7YL
-    Gp5Hq6K1Y4L0KCR4Jl0wCe4HgwKBgQDXcoYtaYGZX+akWoDH2aYB9W5fXUTSc8nj
-    9OioQfHLiC/6mpmWpp7H+Mt6InvL1qXNcEOBYtLa7xTOmFl3e1tqM36bVdLTvOFs
-    LPMw+AnCxTcPdSyMkNg8ZpG83W8UUoUMRoHRJIikf+hhmd+ZIb7br+q9/4+QYzzs
-    kqLGdsEpzwKBgQDN5xssgQZH0QTIzbltlPbp7pLG15qKPgASjljYtu1e3YEL8V0w
-    a/+j+e0ex4XNVB28SjOc6CWg+eo7NvHgvCGA4oMkUYgdJZLHrB6RhritWCL0dUT5
-    kR4CqauN60up5XKFiksNsPu21CafkMQtZ+3K3UtsX15BgEEUS5OkqB110QKBgDMc
-    BP6i5861tGZK3gAK/tm6GmvfGWN/emZshADeW/j3nsIpiMP3VPWFbOfVZF7P1ddt
-    iWYZRoIPc3UrKRYyGlaQTrmU24XFagiahTqZrN8an9w35NCXz+RMRMh0E1TT2qI1
-    27f8nbnAaiU1NpkCK1+8VMir5qfPEvXgN2MzatF7AoGBAJPBpKCR2SVeYtqYMJPN
-    EOJA6Ooi30UThu7KQqeZW7pFpWnzH641MOODInW7FVPcPRcrqMetyreVywE+2Nlw
-    24J7lrgbCxFowJqM9CAx6E6fe+ZP5fez5ZlQwHLKQuiLVPa26GI/LWZXYtDTmYUK
-    HDTFQ+Vo1/aARG83L2V+Lp0T
-    -----END PRIVATE KEY-----
-  public-key: -----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0F0LncROXoviL9c8RbcOUq7SVjb/cNal4GWW76vQStIJa8W7OuHfj+J3QJluPp1odVt4zsXJBzEYdkyoGNjMeEsxZZhyxkps5O+bcGaeWLa+D8cGJgoRV6juXV0gggcbunX1JgUgmaZ9HkQ47UFyqLHxIs0VvJnTK2Ao8Vwti7R/+TdHjaNN3ml4zXQVSCIxIUVplgEFv049j5sDH9B1Nz1Lq6hx1mN3QVajXekl0BBcKal1SxMN+P8w8Ig/ajprD3NAsV+e9SZXLDXeHH1gElKbfogSmDxzCxETCLCo9dqdZGi0MLWqFNXgMFcCTSZoDcoNtntNjm0NTfSrMm8N7QIDAQAB-----END PUBLIC KEY-----
+  private-key: ${PRIVATE_KEY}
+  public-key: ${PUBLIC_KEY}
 
 service:
-  user-url: user-service:8092
-  front-url: nginx:80
+  user-url: ${USER_URL}
+  front-url: ${FRONT_URL}
 
 logging:
   level:

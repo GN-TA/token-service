@@ -1,8 +1,8 @@
 data:
   redis:
-    host: localhost
+    host: s4.java21.net
     port: 6379
-    password:
+    password: 1234
 
 jwt:
   private-key: -----BEGIN PRIVATE KEY-----
