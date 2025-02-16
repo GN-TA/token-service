@@ -25,7 +25,7 @@ WORKDIR /app
 COPY --from=build /app/build/libs/*SNAPSHOT.jar token.jar
 
 # 포트 8091 열기
-EXPOSE 8091
+EXPOSE 8080
 
 # 애플리케이션 실행
 CMD ["java", "-jar", "token.jar"]
