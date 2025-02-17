@@ -23,5 +23,5 @@ service:
 
 logging:
   level:
-    root: info
+    root: debug
 
