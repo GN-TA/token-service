@@ -36,6 +36,7 @@ public class JwtUtils {
      * @return
      */
     private PrivateKey getPrivateKey() {
+        log.debug("[#] privateKey : {}", privateKey);
         String privateKeyPEM = privateKey
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
