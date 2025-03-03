@@ -1,0 +1,24 @@
+server:
+  port: 8091
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+data:
+  redis:
+    host: s4.java21.net
+    port: 6379
+    password: 1234
+
+jwt:
+  private-key:
+  public-key:
+
+service:
+  user-url: localhost:8092
+  front-url: localhost:5173
+
+logging:
+  level:
+    root: debug
