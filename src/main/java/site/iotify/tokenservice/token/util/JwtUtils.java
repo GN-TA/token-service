@@ -36,13 +36,10 @@ public class JwtUtils {
      * @return
      */
     private PrivateKey getPrivateKey() {
-        log.debug("[#] privateKey : {}", privateKey);
         String privateKeyPEM = privateKey
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
-
-        log.debug("[#] privateKeyPEM : {}", privateKeyPEM);
 
         byte[] keyBytes = Base64.getDecoder().decode(privateKeyPEM);
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);

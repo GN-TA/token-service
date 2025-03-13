@@ -7,13 +7,50 @@ server:
 
 data:
   redis:
-    host: s4.java21.net
+    host: localhost
     port: 6379
-    password: 1234
+    password:
 
 jwt:
   private-key:
+    -----BEGIN PRIVATE KEY-----
+    MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC0+hGWNjNlbLv+
+    3fWBY6aLc1c8eZ0ioIK99akfhg69Ng4d5QPCG/I3iRJK5ycFBKtpUAAhMoRQJhc5
+    y9cigy9WVCwOAOdBRjcHAAdNvTf4t8iAOcamwReNQtQTpwoNhsLThwShrcVgOqtB
+    g6CdlZMJhjbeQ4X9tDUG3SLYIWrUP4TH0N9+oaH2dPiy9Mn+7QgpF64mi+AvqXCG
+    SUQK6ihkEXaCLVLTboki1eWmL/FHJCW1t7Os8oWOEOznDzNH+a5400HRIm8R0Nkp
+    korSjzpupEauBOhfezfqhoVlz+t+1nh73Iq8GUISsouVetYgRaGrteWgLS24xn2m
+    ugBVm781AgMBAAECggEALvSjE4JEm5A2xs34IPYmBBCNFdfH+XAD/B19H/y8XkNk
+    LkV5UCfIFLiv0ldfPGIVx2FGZ1agFduMMya8TuwSoCd+trNtTPZW2K4dNwJdP18P
+    2pUjAakf3zrzo5W3egL5EcD6ZqibiXgvbvQj/D8Ow23bVpfWcBkNmRZPMBybhy30
+    HrGevLJ7ZaFX3T9iQ2d+k2xYRTkHKNxFvhtRmDFINMMNsA4nmGABYnA7+ahZCwpj
+    w79T5EDwgeTziHQClVmmuYy6bFO5SBY2iZKeP7gWbpVuf2Cj8s/tXRND/c5eyq9q
+    F/sgprREb6UuhiN2xKxrKitCqgEzixoYW+DhAulbEQKBgQDcuWG9QwLFuJYVnuKc
+    qqc6peI6I0D7NwRcfQyZHF4f7E4x/UD9Opg1DVBLvSv4zDBKQP99IsZm2IDKbdkA
+    HaAxYO/cauCERIeC1YKfu3KMzNyHXPlbEg3In7+7SOF6BAYv0RmWH44ai5LgDfV9
+    q1INfO5Oj6N+PWaZeE34C+K9lwKBgQDR5ns3dMCFwzBnZ8oo84f0u5eO2Q7ZI7Yk
+    UffW5o30Q1JBhYcboE+G7yL7nuDhmv+tt0cQH/1v56UhXky8sKOepgSy411akz2s
+    zyMC16n8Hr27/gNfPdUDLhoPK6Zo6ZZW42lG2JH46wGWSBP+5+0EZV0bSohlxEcW
+    ne7RuxVbEwKBgGqN/Ac4EGCPKbUqTM/A+pYverUCS956wto7bBeGQFI868rqLbOR
+    0+TYlojZvB6RxEY0dqJcZVdE8XfH69hIdQshdun7loOD6b9Zf4PJJBWg2F1onuA+
+    KPVPWWn6Vw9mXe47jZSRizJ5auBLHNYcHLJyO0ElypGo5pz0HP/ADSflAoGBAJcv
+    D2juKw0tfdu9IhtE7ZQU2iEFrnAwDK00bPLYtT5OjxyqdJotaZqi++uIkClvXuFc
+    tU6j/ANyMbpLFbKC+Bb5NUE0CrWGgFHMEEen1sPF0JtrZjpfauITfqmWoxHFzYdf
+    3SAuNVW4zzfTSrO7kTgtWlah5ISITzu3HaDqw4MJAoGABEXZJzydo/BcEB7eTUzq
+    x7ThFLNfXMMCsN1ngz4o5j1nQV334aJouxORlt7fvBHoZV0eX5mBib8+pE1kJ4Hm
+    8c5YFxZ13wGK+9WSFZgoiwXHf/QJn1w0G7fxHSr3ctgdDmWekT2QjAcpsNnuleBF
+    xvHzPUtFtYy3mXaGokZNluA=
+    -----END PRIVATE KEY-----
   public-key:
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtPoRljYzZWy7/t31gWOm
+    i3NXPHmdIqCCvfWpH4YOvTYOHeUDwhvyN4kSSucnBQSraVAAITKEUCYXOcvXIoMv
+    VlQsDgDnQUY3BwAHTb03+LfIgDnGpsEXjULUE6cKDYbC04cEoa3FYDqrQYOgnZWT
+    CYY23kOF/bQ1Bt0i2CFq1D+Ex9DffqGh9nT4svTJ/u0IKReuJovgL6lwhklECuoo
+    ZBF2gi1S026JItXlpi/xRyQltbezrPKFjhDs5w8zR/mueNNB0SJvEdDZKZKK0o86
+    bqRGrgToX3s36oaFZc/rftZ4e9yKvBlCErKLlXrWIEWhq7XloC0tuMZ9proAVZu/
+    NQIDAQAB
+    -----END PUBLIC KEY-----
 
 service:
   user-url: localhost:8092
