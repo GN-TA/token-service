@@ -2,6 +2,7 @@ package site.iotify.tokenservice.token.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,10 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class JwtUtils {
-    private static final long EXPIRATION_TIME_MS_ACCESS = 1000l * 60 * 60;
-    private static final long EXPIRATION_TIME_MS_REFRESH = 1000l * 60 * 60 * 24 * 7;
+    @Value("${token.access.valid-time}")
+    private long accessTokenValidTime;
+    @Value("${token.refresh.valid-time}")
+    private long refreshTokenValidTime;
 
     @Value("${jwt.private-key}")
     private String privateKey;
@@ -33,6 +36,7 @@ public class JwtUtils {
 
     /**
      * Token 생성을 위한 private key 객체 생성
+     *
      * @return
      */
     private PrivateKey getPrivateKey() {
@@ -84,7 +88,7 @@ public class JwtUtils {
                 .subject(email)
                 .claim("roles", roles)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + EXPIRATION_TIME_MS_ACCESS))
+                .expiration(new Date((new Date()).getTime() + accessTokenValidTime))
                 .signWith(getPrivateKey(), Jwts.SIG.RS256)
                 .compact();
     }
@@ -94,7 +98,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .subject(userId)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + EXPIRATION_TIME_MS_REFRESH))
+                .expiration(new Date((new Date()).getTime() + refreshTokenValidTime))
                 .signWith(getPrivateKey())
                 .compact();
     }
