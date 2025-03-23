@@ -25,3 +25,8 @@ logging:
   level:
     root: debug
 
+token:
+  access:
+    valid-time: 900000
+  refresh:
+    valid-time: 604800000
