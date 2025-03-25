@@ -93,13 +93,17 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateRefreshToken(String userId) {
+    public String generateRefreshToken(String userId, Collection roles) {
+        Map<String, String> header = new HashMap<>();
+        header.put("typ", "JWT");
 
         return Jwts.builder()
+                .header().add(header).and()
                 .subject(userId)
+                .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + refreshTokenValidTime))
-                .signWith(getPrivateKey())
+                .signWith(getPrivateKey(), Jwts.SIG.RS256)
                 .compact();
     }
 

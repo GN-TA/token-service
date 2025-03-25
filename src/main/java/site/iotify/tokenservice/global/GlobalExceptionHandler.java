@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import site.iotify.tokenservice.global.util.CookieUtil;
 
+import java.io.IOException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -23,9 +25,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidToken.class)
-    public ResponseEntity<Void> handleInvalidRefreshToken(HttpServletResponse response, InvalidToken e) {
+    public ResponseEntity<String> handleInvalidRefreshToken(HttpServletResponse response, InvalidToken e) throws IOException {
         CookieUtil.clearTokenCookie(response);
-
-        return ResponseEntity.badRequest().build();
+        return new ResponseEntity<>("Invalid refresh token", HttpStatus.UNAUTHORIZED);
     }
 }
