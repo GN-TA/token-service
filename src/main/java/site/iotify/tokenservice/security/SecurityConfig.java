@@ -27,7 +27,7 @@ import site.iotify.tokenservice.token.service.TokenService;
 import java.util.Collections;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final static String PATH_PREFIX = "/v1";

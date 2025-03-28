@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import site.iotify.tokenservice.global.InTransitionException;
 import site.iotify.tokenservice.global.InvalidToken;
 import site.iotify.tokenservice.security.PrincipalDetails;
 import site.iotify.tokenservice.token.controller.dto.Token;
@@ -14,6 +15,7 @@ import site.iotify.tokenservice.user.dto.UserInfo;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Slf4j
@@ -31,44 +33,50 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token reissueToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
-        String email = jwtUtils.extractEmail(refreshToken);
-        System.out.println("ㅁㄴㅇㄹㅁㅁ " + email);
-        String storedToken = redisDao.getToken(email);
-        System.out.println("ㅁㄴㅇㄹf " + storedToken);
+        String userId;
+        try {
+            userId = jwtUtils.extractUserId(refreshToken);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new InvalidToken();
+        }
+        String storedToken = redisDao.getToken(userId);
+        Collection authorities = (Collection) jwtUtils.getClaims(refreshToken).getPayload().get("roles");
+        Token token;
 
-        if (jwtUtils.validateToken(refreshToken, storedToken)) {
-            System.out.println("밸리데이트토큰 성공");
+        if (!redisDao.hasToken(accessToken) && jwtUtils.validateToken(refreshToken, storedToken)) {
             blackListToken(refreshToken, "reissue");
-            Collection authorities = (Collection) jwtUtils.getClaims(refreshToken).getPayload().get("roles");
-            return issueToken(email, authorities);
+            redisDao.saveToken(accessToken, "in-transition", Duration.ofSeconds(3L));
+            token = issueToken(userId, authorities);
+            return token;
+        } else if (redisDao.hasToken(accessToken) && "in-transition".equals(redisDao.getToken(accessToken))) {
+            token = new Token(issueToken(userId, authorities).getAccessToken(), redisDao.getToken(userId));
+            throw new InTransitionException(token);
         } else {
-            // todo 레디스 email : refreshToken 삭제
-            System.out.println("밸리데이트 실패");
-            redisDao.deleteToken(email);
-//            response.sendRedirect("/login");
+            redisDao.deleteToken(userId);
             throw new InvalidToken();
         }
     }
 
     @Override
-    public void blackListToken(String accessToken, String type) {
-        redisDao.saveToken(accessToken, type, jwtUtils.extractExpirationTime(accessToken));
-        String key = jwtUtils.extractEmail(accessToken);
+    public void blackListToken(String refreshToken, String type) {
+        redisDao.saveToken(refreshToken, type, jwtUtils.extractExpirationTime(refreshToken));
+        String key = jwtUtils.extractUserId(refreshToken);
         if (redisDao.hasToken(key)) {
-            redisDao.deleteToken(jwtUtils.extractEmail(accessToken));
+            redisDao.deleteToken(jwtUtils.extractUserId(refreshToken));
         }
     }
 
-    private Token issueToken(String email, Collection authorities) {
-        log.debug("[#] Issuing token... : {}", email);
+    private Token issueToken(String userId, Collection authorities) {
+        log.debug("[#] Issuing token... : {}", userId);
 
-        String accessToken = jwtUtils.generateAccessToken(email, authorities);
-        String refreshToken = jwtUtils.generateRefreshToken(email, authorities);
+        String accessToken = jwtUtils.generateAccessToken(userId, authorities);
+        String refreshToken = jwtUtils.generateRefreshToken(userId, authorities);
         Duration expiration = jwtUtils.extractExpirationTime(refreshToken);
 
         log.debug("[#] expiration: {}", expiration);
 
-        redisDao.saveToken(email, refreshToken, expiration);
+        redisDao.saveToken(userId, refreshToken, expiration);
 
         log.debug("[#] issue Token successfully");
         return new Token(accessToken, refreshToken);
