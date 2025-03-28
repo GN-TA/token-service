@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import site.iotify.tokenservice.global.util.CookieUtil;
+import site.iotify.tokenservice.token.controller.dto.Token;
+
+import java.io.IOException;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,9 +27,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidToken.class)
-    public ResponseEntity<Void> handleInvalidRefreshToken(HttpServletResponse response, InvalidToken e) {
+    public ResponseEntity<String> handleInvalidRefreshToken(HttpServletResponse response, InvalidToken e) throws IOException {
         CookieUtil.clearTokenCookie(response);
+        return new ResponseEntity<>("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+    }
 
-        return ResponseEntity.badRequest().build();
+    @ExceptionHandler(InTransitionException.class)
+    public ResponseEntity<Token> handleInTransitionException(InTransitionException e) {
+        return ResponseEntity.status(e.getHttpStatus()).body(e.getToken());
     }
 }
