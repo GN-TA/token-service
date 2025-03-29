@@ -59,6 +59,8 @@ service:
 logging:
   level:
     root: debug
+    sun.rmi: info
+    javax.management.remote.rmi: info
 
 token:
   access:
