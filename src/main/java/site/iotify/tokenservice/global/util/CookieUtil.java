@@ -30,8 +30,7 @@ public class CookieUtil {
     }
 
     public static void clearTokenCookie(HttpServletResponse response) {
-        System.out.println("클리어 토큰 쿠키");
-        response.addHeader("Set-Cookie", "AT=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict");
+        response.addHeader("Set-Cookie", "AT=; Path=/; Max-Age=0; SameSite=Strict");
         response.addHeader("Set-Cookie", "RT=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict");
     }
 }
