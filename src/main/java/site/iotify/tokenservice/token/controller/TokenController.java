@@ -11,6 +11,8 @@ import site.iotify.tokenservice.global.util.CookieUtil;
 import site.iotify.tokenservice.token.controller.dto.Token;
 import site.iotify.tokenservice.token.service.TokenService;
 
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -27,14 +29,13 @@ public class TokenController {
         log.debug("[#] RT: {}", refreshToken);
 
         try {
-            Token newToken = tokenService.reissueToken(accessToken, refreshToken);
+            Token newToken = tokenService.reissueToken(response, accessToken, refreshToken);
+            System.out.println("이건 실행되면 안되는데");
             CookieUtil.setTokenCookie(response, newToken);
 
             return ResponseEntity.ok(newToken);
-
-        } catch (InvalidToken e) {
-
-            return ResponseEntity.badRequest().build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

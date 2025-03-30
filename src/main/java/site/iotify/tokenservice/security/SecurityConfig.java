@@ -32,9 +32,9 @@ import java.util.Collections;
 public class SecurityConfig {
     private final static String PATH_PREFIX = "/v1";
     private final static String[] allowedUrls = {
-            PATH_PREFIX +"/login",
-            PATH_PREFIX +"/refresh",
-            PATH_PREFIX +"/logout"
+            PATH_PREFIX + "/login",
+            PATH_PREFIX + "/refresh",
+            PATH_PREFIX + "/logout"
     };
 
     @Value("${service.front-url}")
@@ -86,10 +86,10 @@ public class SecurityConfig {
                 )
                 // TODO : front로 처리하면 될 것 같은데 좀 더 알아봐야 할 것 같음
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("http://"+frontUrl+"/login")
+                        .loginPage("http://" + frontUrl + "/login")
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
                         .authorizationEndpoint(authEndpoint -> authEndpoint.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirect -> redirect.baseUri("http://localhost:8091"+ allowedUrls[0]))
+                        .redirectionEndpoint(redirect -> redirect.baseUri("http://localhost:8091" + allowedUrls[0]))
                         .successHandler(googleOAuthLoginSuccessHandler)
                         .failureHandler(googleOAuthLoginFailureHandler))
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -99,9 +99,9 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl(allowedUrls[0]);
         http
                 .addFilterAt(
-                loginFilter,
-                UsernamePasswordAuthenticationFilter.class
-        )
+                        loginFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .logout(logout -> logout
                         .logoutUrl(allowedUrls[2])
                         .addLogoutHandler(new JwtLogoutHandler(tokenService))

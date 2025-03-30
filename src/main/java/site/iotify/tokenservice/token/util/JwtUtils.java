@@ -22,8 +22,10 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class JwtUtils {
-    private static final long EXPIRATION_TIME_MS_ACCESS = 1000l * 60 * 60;
-    private static final long EXPIRATION_TIME_MS_REFRESH = 1000l * 60 * 60 * 24 * 7;
+    @Value("${token.access.valid-time}")
+    private long accessTokenValidTime;
+    @Value("${token.refresh.valid-time}")
+    private long refreshTokenValidTime;
 
     @Value("${jwt.private-key}")
     private String privateKey;
@@ -33,6 +35,7 @@ public class JwtUtils {
 
     /**
      * Token 생성을 위한 private key 객체 생성
+     *
      * @return
      */
     private PrivateKey getPrivateKey() {
@@ -84,18 +87,22 @@ public class JwtUtils {
                 .subject(email)
                 .claim("roles", roles)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + EXPIRATION_TIME_MS_ACCESS))
+                .expiration(new Date((new Date()).getTime() + accessTokenValidTime))
                 .signWith(getPrivateKey(), Jwts.SIG.RS256)
                 .compact();
     }
 
-    public String generateRefreshToken(String userId) {
+    public String generateRefreshToken(String userId, Collection roles) {
+        Map<String, String> header = new HashMap<>();
+        header.put("typ", "JWT");
 
         return Jwts.builder()
+                .header().add(header).and()
                 .subject(userId)
+                .claim("roles", roles)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + EXPIRATION_TIME_MS_REFRESH))
-                .signWith(getPrivateKey())
+                .expiration(new Date((new Date()).getTime() + refreshTokenValidTime))
+                .signWith(getPrivateKey(), Jwts.SIG.RS256)
                 .compact();
     }
 
@@ -120,7 +127,7 @@ public class JwtUtils {
     }
 
 
-    public String extractEmail(String token) {
+    public String extractUserId(String token) {
         return getClaims(token).getPayload().getSubject();
     }
 
