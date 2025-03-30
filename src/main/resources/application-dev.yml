@@ -5,11 +5,12 @@ server:
       charset: UTF-8
       force: true
 
-data:
-  redis:
-    host: localhost
-    port: 6379
-    password:
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
 
 jwt:
   private-key:
