@@ -62,7 +62,7 @@ logging:
 
 token:
   access:
-    valid-time: 60000
+    valid-time: 3600000
   refresh:
     valid-time: 604800000
 #    valid-time: 60000
