@@ -30,7 +30,6 @@ public class TokenController {
 
         try {
             Token newToken = tokenService.reissueToken(response, accessToken, refreshToken);
-            System.out.println("이건 실행되면 안되는데");
             CookieUtil.setTokenCookie(response, newToken);
 
             return ResponseEntity.ok(newToken);
