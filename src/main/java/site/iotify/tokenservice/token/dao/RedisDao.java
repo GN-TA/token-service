@@ -25,6 +25,10 @@ public class RedisDao {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
+    public boolean isTokenBlackListed(String userId, String accessToken) {
+        return accessToken.equals(getToken(userId + "-blackListed"));
+    }
+
     public String getToken(String key) {
         if (key == null) {
             return null;

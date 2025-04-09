@@ -26,7 +26,7 @@ public class CookieUtil {
 
     public static void setTokenCookie(HttpServletResponse response, Token token) {
         response.addHeader("Set-Cookie", "AT=" + token.getAccessToken() + "; Path=/;  Max-Age=" + TOKEN_EXPIRES + "; SameSite=Strict");
-        response.addHeader("Set-Cookie", "RT=" + token.getRefreshToken() + "; Path=/; Max-Age=" + TOKEN_EXPIRES + "; HttpOnly; SameSite=Strict");
+//        response.addHeader("Set-Cookie", "RT=" + token.getRefreshToken() + "; Path=/; Max-Age=" + TOKEN_EXPIRES + "; HttpOnly; SameSite=Strict");
     }
 
     public static void clearTokenCookie(HttpServletResponse response) {

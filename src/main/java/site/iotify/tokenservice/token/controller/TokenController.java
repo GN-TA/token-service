@@ -23,13 +23,11 @@ public class TokenController {
     @PostMapping("/refresh")
     public ResponseEntity<Token> refresh(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = CookieUtil.extractTokenFromCookies(request, "AT").orElseThrow(() -> new InvalidToken("Access Token이 존재하지 않습니다"));
-        String refreshToken = CookieUtil.extractTokenFromCookies(request, "RT").orElseThrow(() -> new InvalidToken("Refresh Token이 존재하지 않습니다"));
 
         log.debug("[#] AT: {}", accessToken);
-        log.debug("[#] RT: {}", refreshToken);
 
         try {
-            Token newToken = tokenService.reissueToken(response, accessToken, refreshToken);
+            Token newToken = tokenService.reissueToken(response, accessToken);
             CookieUtil.setTokenCookie(response, newToken);
 
             return ResponseEntity.ok(newToken);

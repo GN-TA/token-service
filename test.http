@@ -5,3 +5,9 @@ Content-Type: application/json
   "email": test@test.com,
   "password": 123
 }
+
+
+### refresh test
+POST http://localhost:8091/v1/refresh
+Content-Type: application/json
+Cookie: AT=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJlNGNiMjU1MC1kOTNjLTQ2MjctOTY4ZC1mZGZkMTEzZGEyOGQiLCJyb2xlcyI6W3siYXV0aG9yaXR5IjoiQURNSU4ifV0sImlhdCI6MTc0NDE4NTI0MywiZXhwIjoxNzQ0MTg2MTQzfQ.AC4PtpAP9jJ7RZrHoPnML--a-dyEiQWmGvLFIm8ESZK3HGBJJu2w8D3rnvbGGoDZYg_ZObrfOG5ET5X3wx_HH-wVfLZs4ItOcSJs37VKQ3n1H_eV6zZQ2wWqMi8aMBtdLbf8xxfuNBPMWVyktYb34mqgWRyOGgbyUi5wcuEUCN9m-eYOibkbXsd55t1R1ix74ZsYI7qtkqSqGB_DHcLFxbt1DT8sBzYJb8rB2GC-7L16L9SH71KXy36U0qS3hrCrkwgPK-QhfulAZJc5gJ4Pf2LY2Ucyzc3KzmBJcfK_zBDxOwiTBtmvFkVmPO7OshlfsjhdyBjHcynAgkggSBo-1Q

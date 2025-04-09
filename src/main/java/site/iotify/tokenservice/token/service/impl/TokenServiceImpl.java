@@ -15,7 +15,6 @@ import site.iotify.tokenservice.user.dto.UserInfo;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Slf4j
@@ -32,22 +31,24 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token reissueToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    public Token reissueToken(HttpServletResponse response, String accessToken) throws IOException {
         String userId;
         try {
-            userId = jwtUtils.extractUserId(refreshToken);
+            userId = jwtUtils.extractUserId(accessToken);
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             throw new InvalidToken();
         }
         String storedToken = redisDao.getToken(userId);
-        Collection authorities = (Collection) jwtUtils.getClaims(refreshToken).getPayload().get("roles");
+        Collection authorities = (Collection) jwtUtils.extractClaimsEvenIfExpired(accessToken).get("roles");
         Token token;
 
-        if (!redisDao.hasToken(accessToken) && jwtUtils.validateToken(refreshToken, storedToken)) {
-            blackListToken(refreshToken, "reissue");
+        // {accesstoken}-blacklisted 인지 확인
+        if (!redisDao.isTokenBlackListed(userId, accessToken) && jwtUtils.validateToken(storedToken)) {
+            // 3초간 이전 토큰을 들고 오는 요청들은 재발급 허용
             redisDao.saveToken(accessToken, "in-transition", Duration.ofSeconds(3L));
             token = issueToken(userId, authorities);
+            blackListToken(userId, accessToken, jwtUtils.extractExpirationTime(token.getRefreshToken()));
             return token;
         } else if (redisDao.hasToken(accessToken) && "in-transition".equals(redisDao.getToken(accessToken))) {
             token = new Token(issueToken(userId, authorities).getAccessToken(), redisDao.getToken(userId));
@@ -59,12 +60,8 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void blackListToken(String refreshToken, String type) {
-        redisDao.saveToken(refreshToken, type, jwtUtils.extractExpirationTime(refreshToken));
-        String key = jwtUtils.extractUserId(refreshToken);
-        if (redisDao.hasToken(key)) {
-            redisDao.deleteToken(jwtUtils.extractUserId(refreshToken));
-        }
+    public void blackListToken(String key, String accessToken, Duration duration) {
+        redisDao.saveToken(key + "-blacklisted", accessToken, duration);
     }
 
     private Token issueToken(String userId, Collection authorities) {
