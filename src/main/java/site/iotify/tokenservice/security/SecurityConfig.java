@@ -45,18 +45,18 @@ public class SecurityConfig {
     private final CustomOidcUserService customOidcUserService;
     private final GoogleOAuthLoginSuccessHandler googleOAuthLoginSuccessHandler;
     private final GoogleOAuthLoginFailureHandler googleOAuthLoginFailureHandler;
-    private final JwtUtils jwtUtils;
+    private final JwtLogoutHandler jwtLogoutHandler;
 
     public SecurityConfig(TokenService tokenService,
                           CustomOidcUserService customOidcUserService,
                           GoogleOAuthLoginSuccessHandler googleOAuthLoginSuccessHandler,
                           GoogleOAuthLoginFailureHandler googleOAuthLoginFailureHandler,
-                          JwtUtils jwtUtils) {
+                          JwtLogoutHandler jwtLogoutHandler) {
         this.tokenService = tokenService;
         this.customOidcUserService = customOidcUserService;
         this.googleOAuthLoginSuccessHandler = googleOAuthLoginSuccessHandler;
         this.googleOAuthLoginFailureHandler = googleOAuthLoginFailureHandler;
-        this.jwtUtils = jwtUtils;
+        this.jwtLogoutHandler = jwtLogoutHandler;
     }
 
     @Bean
@@ -110,7 +110,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl(allowedUrls[2])
-                        .addLogoutHandler(new JwtLogoutHandler(tokenService, jwtUtils))
+                        .addLogoutHandler(jwtLogoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                             response.setStatus(HttpStatus.CREATED.value());

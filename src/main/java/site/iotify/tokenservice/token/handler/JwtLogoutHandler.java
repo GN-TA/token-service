@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.stereotype.Component;
 import site.iotify.tokenservice.global.InvalidToken;
 import site.iotify.tokenservice.global.LogoutFailedException;
 import site.iotify.tokenservice.global.util.CookieUtil;
@@ -18,6 +19,7 @@ import java.time.Duration;
 
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtLogoutHandler implements LogoutHandler {
     private final TokenService tokenService;
@@ -31,7 +33,7 @@ public class JwtLogoutHandler implements LogoutHandler {
         try {
 
             String accessToken = CookieUtil.extractTokenFromCookies(request, "AT").orElseThrow(() -> new InvalidToken("Access token 이 존재하지 않습니다"));
-            tokenService.blackListToken(jwtUtils.extractUserId(accessToken), accessToken, Duration.parse(expiredDate));
+            tokenService.blackListToken(jwtUtils.extractUserId(accessToken), accessToken, Duration.ofSeconds(Long.parseLong(expiredDate)));
 
             CookieUtil.clearTokenCookie(response);
 
