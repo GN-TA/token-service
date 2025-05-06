@@ -13,17 +13,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import site.iotify.tokenservice.security.filter.NhnEmailVerficationFilter;
+import site.iotify.tokenservice.security.oauth.handler.OAuthLoginFailureHandler;
+import site.iotify.tokenservice.security.oauth.handler.OAuthLoginSuccessHandler;
 import site.iotify.tokenservice.token.filter.JwtAuthenticationFilter;
-import site.iotify.tokenservice.security.oauth.handler.GoogleOAuthLoginFailureHandler;
-import site.iotify.tokenservice.security.oauth.CustomOidcUserService;
-import site.iotify.tokenservice.security.oauth.handler.GoogleOAuthLoginSuccessHandler;
 import site.iotify.tokenservice.token.handler.JwtLogoutHandler;
 import site.iotify.tokenservice.token.service.TokenService;
-import site.iotify.tokenservice.token.util.JwtUtils;
 
 import java.util.Collections;
 
@@ -35,28 +37,33 @@ public class SecurityConfig {
     private final static String[] allowedUrls = {
             PATH_PREFIX + "/login",
             PATH_PREFIX + "/refresh",
-            PATH_PREFIX + "/logout"
+            PATH_PREFIX + "/logout",
+            "/oauth2/**",
+            "/login/oauth2/**",
+            "/email/**",
+            "/user"
     };
 
     @Value("${service.front-url}")
     private String frontUrl;
-
     private final TokenService tokenService;
-    private final CustomOidcUserService customOidcUserService;
-    private final GoogleOAuthLoginSuccessHandler googleOAuthLoginSuccessHandler;
-    private final GoogleOAuthLoginFailureHandler googleOAuthLoginFailureHandler;
+    private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
+    private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
     private final JwtLogoutHandler jwtLogoutHandler;
+    private final NhnEmailVerficationFilter nhnEmailVerficationFilter;
 
     public SecurityConfig(TokenService tokenService,
-                          CustomOidcUserService customOidcUserService,
-                          GoogleOAuthLoginSuccessHandler googleOAuthLoginSuccessHandler,
-                          GoogleOAuthLoginFailureHandler googleOAuthLoginFailureHandler,
-                          JwtLogoutHandler jwtLogoutHandler) {
+//                          CustomOidcUserService customOidcUserService,
+                          OAuthLoginSuccessHandler oAuthLoginSuccessHandler,
+                          OAuthLoginFailureHandler oAuthLoginFailureHandler,
+                          JwtLogoutHandler jwtLogoutHandler,
+                          NhnEmailVerficationFilter nhnEmailVerficationFilter) {
         this.tokenService = tokenService;
-        this.customOidcUserService = customOidcUserService;
-        this.googleOAuthLoginSuccessHandler = googleOAuthLoginSuccessHandler;
-        this.googleOAuthLoginFailureHandler = googleOAuthLoginFailureHandler;
+//        this.customOidcUserService = customOidcUserService;
+        this.oAuthLoginSuccessHandler = oAuthLoginSuccessHandler;
+        this.oAuthLoginFailureHandler = oAuthLoginFailureHandler;
         this.jwtLogoutHandler = jwtLogoutHandler;
+        this.nhnEmailVerficationFilter = nhnEmailVerficationFilter;
     }
 
     @Bean
@@ -82,7 +89,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration,
+                                                   OAuth2AuthorizationRequestResolver resolver) throws Exception {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(allowedUrls).permitAll()
@@ -90,14 +98,16 @@ public class SecurityConfig {
                 )
                 .formLogin(AbstractHttpConfigurer::disable
                 )
-                // TODO : front로 처리하면 될 것 같은데 좀 더 알아봐야 할 것 같음
+                .addFilterBefore(nhnEmailVerficationFilter, OAuth2AuthorizationRequestRedirectFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("http://" + frontUrl + "/login")
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
-                        .authorizationEndpoint(authEndpoint -> authEndpoint.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirect -> redirect.baseUri("http://localhost:8091" + allowedUrls[0]))
-                        .successHandler(googleOAuthLoginSuccessHandler)
-                        .failureHandler(googleOAuthLoginFailureHandler))
+                        .authorizationEndpoint(authEndpoint -> {
+                            authEndpoint.baseUri("/oauth2/authorization");
+                            authEndpoint.authorizationRequestResolver(resolver);
+                        })
+                        .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
+                        .successHandler(oAuthLoginSuccessHandler)
+                        .failureHandler(oAuthLoginFailureHandler))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
 

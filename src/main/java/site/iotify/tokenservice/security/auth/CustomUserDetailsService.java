@@ -17,10 +17,11 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserAdapter userAdapter;
+
     /**
      * user-service에 요청을 보내 사용자의 정보를 조회하고, 해당 정보를 기반으로
      * {@link PrincipalDetails} 객체를 생성하여 반환합니다.
-     *
+     * <p>
      * 사용자가 존재하지 않을 경우 {@link UsernameNotFoundException}을 발생시킵니다.
      *
      * @param username 조회할 사용자의 아이디(이름)
@@ -29,17 +30,11 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // TODO 사용자 정보 받아와서 PrincipalDetails 타입 객체 생성해서 리턴
-        log.info("[#] PrincipalDetails 생성중: {}", username);
-        UserInfo userInfo = userAdapter.getUserInfo(username);
+        UserInfo userInfo = userAdapter.getUserInfo(username).orElse(null);
         if (userInfo == null) {
             throw new UsernameNotFoundException(username);
         }
-
-        String password = userAdapter.getPassword(userInfo.getEmail());
-
-        log.info("[#] UserInfo : {}", userInfo.toString());
+        String password = userAdapter.getPassword(userInfo.getEmail()).orElse(null);
         return new PrincipalDetails(userInfo, password);
     }
-
 }
