@@ -25,7 +25,7 @@ spring:
 
 dooray:
   api:
-    token: ${DOORAY_API_TOKEN}
+    token: asdf
     host: https://api.dooray.com/
 
 jwt:
