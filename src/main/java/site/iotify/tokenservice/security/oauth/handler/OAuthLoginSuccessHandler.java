@@ -33,7 +33,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
-    private final DoorayService doorayService;
     private final UserService userService;
     private final TokenService tokenService;
     @Value("${service.front-url}")
