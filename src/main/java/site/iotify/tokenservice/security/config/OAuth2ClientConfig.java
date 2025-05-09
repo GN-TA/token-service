@@ -1,7 +1,6 @@
-package site.iotify.tokenservice.security;
+package site.iotify.tokenservice.security.config;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,23 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import site.iotify.tokenservice.token.dao.RedisDao;
-import site.iotify.tokenservice.user.service.UserService;
-
-import java.io.IOException;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class OAuth2ClientConfig {
-    private final RedisDao redisDao;
-    private final UserService userService;
 
     @Bean
     public OAuth2AuthorizationRequestResolver customAuthorizationRequestResolver(ClientRegistrationRepository clients) {
@@ -64,26 +52,6 @@ public class OAuth2ClientConfig {
                 if ("login".equals(accessType)) {
                     session.setAttribute("ACCESS_TYPE", "login");
                 } else if ("signup".equals(accessType)) {
-//                    String nhnVerified = redisDao.getToken(request.getParameter("nhnEmail"));
-//                    if (!"true".equals(nhnVerified)) {
-//                        HttpServletResponse response =
-//                                ((ServletRequestAttributes) RequestContextHolder
-//                                        .currentRequestAttributes()).getResponse();
-//
-//                        new SecurityContextLogoutHandler().logout(request, response, null);
-//                        response.setContentType("text/html;charset=UTF-8");
-//                        try {
-//                            response.getWriter().write(
-//                                    "<script>"
-//                                            + " alert('NHN 이메일 인증을 먼저 해주세요');"
-//                                            + " window.close();"
-//                                            + "</script>"
-//                            );
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                        return null;
-//                    }
                     String nhnEmailParam = request.getParameter("nhnEmail");
                     session.setAttribute("ACCESS_TYPE", "signup");
                     session.setAttribute("NHN_EMAIL_FOR_SOCIAL", nhnEmailParam);

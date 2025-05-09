@@ -38,15 +38,14 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
     private final TokenService tokenService;
     @Value("${service.front-url}")
     private String frontUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.error("로그인 success");
-        log.error(authentication.getName() + "/n" + authentication.getDetails());
-        log.error(request.getServletPath());
-
         HttpSession session = request.getSession(false);
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
         if ("login".equals(session.getAttribute("ACCESS_TYPE"))) {
-            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
             UserInfo userInfo = userService.getMemberInfo(oAuth2User.getAttribute("email"));
             if (Objects.isNull(userInfo)) {
                 log.error("등록되지 않은 사용자");
@@ -61,18 +60,11 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
                 );
                 return;
             }
-            log.debug("`[#] Login Success : {}", Optional.ofNullable(oAuth2User.getAttribute("email")));
             Token token = tokenService.issueJwt(new PrincipalDetails(userInfo, ""));
-            log.debug("[#] access token: {}", token.getAccessToken());
-            log.debug("[#] refresh token: {}", token.getRefreshToken());
-
             CookieUtil.setTokenCookie(response, token);
-            log.debug("[#] Add Set Cookie Header");
             response.setContentType("text/html; charset=UTF-8");
             response.getWriter().write(
                     "<script>" +
-                            // 부모 창을 리다이렉트 하고 싶으면 아래처럼 frontUrl + 원하는 경로
-                            // 부모 창 새로고침만 할 거면 → window.opener.location.reload();
                             "  window.close();" +
                             "  window.opener.location.href = '" + frontUrl + "/';" +
                             "  window.opener.location.reload();" +
@@ -80,7 +72,6 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
             );
         } else if ("signup".equals(session.getAttribute("ACCESS_TYPE"))
                 && authentication instanceof OAuth2AuthenticationToken oauth) {
-            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
             String email = oAuth2User.getAttribute("email");
             String provider = oauth.getAuthorizedClientRegistrationId();
             String nhnEmail = (String) session.getAttribute("NHN_EMAIL_FOR_SOCIAL");
@@ -93,8 +84,6 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
             response.setContentType("text/html; charset=UTF-8");
             response.getWriter().write(
                     "<script>" +
-                            // 부모 창을 리다이렉트 하고 싶으면 아래처럼 frontUrl + 원하는 경로
-                            // 부모 창 새로고침만 할 거면 → window.opener.location.reload();
                             "  window.close();" +
                             "  window.opener.location.href = '" + frontUrl + "/';" +
                             "  window.opener.location.reload();" +

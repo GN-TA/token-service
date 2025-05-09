@@ -1,4 +1,4 @@
-package site.iotify.tokenservice.security;
+package site.iotify.tokenservice.security.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,13 +53,11 @@ public class SecurityConfig {
     private final NhnEmailVerficationFilter nhnEmailVerficationFilter;
 
     public SecurityConfig(TokenService tokenService,
-//                          CustomOidcUserService customOidcUserService,
                           OAuthLoginSuccessHandler oAuthLoginSuccessHandler,
                           OAuthLoginFailureHandler oAuthLoginFailureHandler,
                           JwtLogoutHandler jwtLogoutHandler,
                           NhnEmailVerficationFilter nhnEmailVerficationFilter) {
         this.tokenService = tokenService;
-//        this.customOidcUserService = customOidcUserService;
         this.oAuthLoginSuccessHandler = oAuthLoginSuccessHandler;
         this.oAuthLoginFailureHandler = oAuthLoginFailureHandler;
         this.jwtLogoutHandler = jwtLogoutHandler;

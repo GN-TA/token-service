@@ -12,10 +12,12 @@ import site.iotify.tokenservice.token.dao.RedisDao;
 import site.iotify.tokenservice.token.service.TokenService;
 import site.iotify.tokenservice.token.util.JwtUtils;
 import site.iotify.tokenservice.user.dto.UserInfo;
+import site.iotify.tokenservice.user.exception.UnauthenticatedException;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -39,22 +41,19 @@ public class TokenServiceImpl implements TokenService {
             log.error(e.getMessage());
             throw new InvalidToken();
         }
-        String storedToken = redisDao.getToken(userId);
         Collection authorities = (Collection) jwtUtils.extractClaimsEvenIfExpired(accessToken).get("roles");
         Token token;
-
-        // {accesstoken}-blacklisted 인지 확인
-        if (!redisDao.isTokenBlackListed(userId, accessToken) && jwtUtils.validateToken(storedToken)) {
-            // 3초간 이전 토큰을 들고 오는 요청들은 재발급 허용
-            redisDao.saveToken(accessToken, "in-transition", Duration.ofSeconds(3L));
+        String refreshToken = redisDao.getToken(accessToken);
+        if (Objects.isNull(refreshToken)) {
+            throw new UnauthenticatedException("다시 로그인 해주세요");
+        }
+        // refresh 검증 성공시 새 access token 생성 -> 이전 액세스 토큰 삭제 & 새 access : refresh 저장,
+        // 실패 시 401
+        if (jwtUtils.validateToken(refreshToken)) {
+            redisDao.deleteToken(accessToken);
             token = issueToken(userId, authorities);
-            blackListToken(userId, accessToken, jwtUtils.extractExpirationTime(token.getRefreshToken()));
             return token;
-        } else if (redisDao.hasToken(accessToken) && "in-transition".equals(redisDao.getToken(accessToken))) {
-            token = new Token(issueToken(userId, authorities).getAccessToken(), redisDao.getToken(userId));
-            throw new InTransitionException(token);
         } else {
-            redisDao.deleteToken(userId);
             throw new InvalidToken();
         }
     }
@@ -73,11 +72,10 @@ public class TokenServiceImpl implements TokenService {
 
         log.debug("[#] expiration: {}", expiration);
 
-        redisDao.saveToken(userId, refreshToken, expiration);
+        redisDao.saveToken(accessToken, refreshToken, expiration);
 
         log.debug("[#] issue Token successfully");
         return new Token(accessToken, refreshToken);
     }
-
 
 }

@@ -22,7 +22,8 @@ public class TokenController {
 
     @PostMapping("/refresh")
     public ResponseEntity<Token> refresh(HttpServletRequest request, HttpServletResponse response) {
-        String accessToken = CookieUtil.extractTokenFromCookies(request, "AT").orElseThrow(() -> new InvalidToken("Access Token이 존재하지 않습니다"));
+        String accessToken = CookieUtil.extractTokenFromCookies(request, "AT")
+                .orElseThrow(() -> new InvalidToken("Access Token이 존재하지 않습니다"));
 
         log.debug("[#] AT: {}", accessToken);
 
