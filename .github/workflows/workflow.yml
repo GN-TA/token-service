@@ -111,6 +111,7 @@ jobs:
             export REDIS_PORT=${{ secrets.REDIS_PORT }}
             export USER_URL=${{ secrets.USER_URL }}
             export FRONT_URL=${{ secrets.FRONT_URL }}
+            export DOORAY_API_TOKEN=${{ secrets.DOORAY_API_TOKEN }}
             export DOCKER_IMAGE=codethestudent/iot-token-service:latest
             
             cd docker-compose
