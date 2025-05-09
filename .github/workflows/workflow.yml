@@ -111,6 +111,7 @@ jobs:
             export REDIS_PORT=${{ secrets.REDIS_PORT }}
             export USER_URL=${{ secrets.USER_URL }}
             export FRONT_URL=${{ secrets.FRONT_URL }}
+            export MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
             export OAUTH_ID_GITHUB=${{ secrets.OAUTH_ID_GITHUB }}
             export OAUTH_ID_GOOGLE=${{ secrets.OAUTH_ID_GOOGLE }}
             export OAUTH_SECRET_GITHUB=${{ secrets.OAUTH_SECRET_GITHUB }}
