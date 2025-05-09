@@ -23,6 +23,11 @@ spring:
       password: ${REDIS_PASSWORD}
       database: 295
 
+dooray:
+  api:
+    token: ${DOORAY_API_TOKEN}
+    host: https://api.dooray.com/
+
 jwt:
   private-key: ${PRIVATE_KEY}
   public-key: ${PUBLIC_KEY}
