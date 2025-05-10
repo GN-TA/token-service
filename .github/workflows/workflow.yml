@@ -117,6 +117,8 @@ jobs:
             export OAUTH_SECRET_GITHUB=${{ secrets.OAUTH_SECRET_GITHUB }}
             export OAUTH_SECRET_GOOGLE=${{ secrets.OAUTH_SECRET_GOOGLE }}
             export DOORAY_API_TOKEN=${{ secrets.DOORAY_API_TOKEN }}
+            export REDIRECT_URL_GITHUB=${{ secrets.REDIRECT_URL_GITHUB }}
+            export REDIRECT_URL_GOOGLE=${{ secrets.REDIRECT_URL_GOOGLE }}
             export DOCKER_IMAGE=codethestudent/iot-token-service:latest
             
             cd docker-compose
