@@ -1,6 +1,7 @@
 package site.iotify.tokenservice.token.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -106,7 +107,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public boolean validateToken(String refreshToken, String storedRefreshToken) {
+    public boolean compareToken(String refreshToken, String storedRefreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             return false;
         }
@@ -119,6 +120,14 @@ public class JwtUtils {
         }
     }
 
+    public boolean validateToken(String token) {
+        if (Objects.isNull(token)) {
+            return false;
+        }
+        getClaims(token);
+        return true;
+    }
+
     public Jws<Claims> getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getPublicKey())
@@ -126,9 +135,17 @@ public class JwtUtils {
                 .parseSignedClaims(token);
     }
 
+    public Claims extractClaimsEvenIfExpired(String token) {
+        try {
+            return getClaims(token).getPayload();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims(); // ⬅ 이게 핵심
+        }
+    }
+
 
     public String extractUserId(String token) {
-        return getClaims(token).getPayload().getSubject();
+        return extractClaimsEvenIfExpired(token).getSubject();
     }
 
     public Duration extractExpirationTime(String token) {
